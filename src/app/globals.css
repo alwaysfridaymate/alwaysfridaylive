@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #0d0d0d;
+  --color-surface: #161616;
+  --color-text: #ffffff;
+  --color-text-muted: #999999;
+  --color-accent: #00d4ff;
+  --color-border: #2a2a2a;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Thin scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+/* SVG section headings - white fill */
+.svg-heading-white svg path {
+  fill: #ffffff;
+}
+
+/* SVG with reduced opacity for layered effect */
+.svg-heading-dim svg path {
+  fill: #1a1a1a;
+}
