@@ -74,12 +74,12 @@ function Hero() {
             <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8">
               Curated Audio &amp; Video Creation
             </p>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.5rem] font-semibold leading-[1.15] tracking-tight text-white max-w-3xl mb-8 md:mb-12">
+            <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8 md:mb-12">
               Podcasts, audiobooks and voiceovers with guidance, dramaturgy and&nbsp;quality.
             </h1>
             <a
               href="#booking"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium border border-white/30 text-white rounded-full hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
             >
               Book a Session
             </a>
