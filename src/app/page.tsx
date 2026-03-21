@@ -40,7 +40,7 @@ function Nav() {
 /* ─── HERO ─── */
 function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d] isolate">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -51,34 +51,40 @@ function Hero() {
           priority
           quality={90}
         />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/60 to-[#0d0d0d]/30" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20">
-        <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8">
-          Curated Audio &amp; Video Creation
-        </p>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.5rem] font-semibold leading-[1.15] tracking-tight text-white max-w-4xl mb-8 md:mb-12">
-          Podcasts, audiobooks and voiceovers with guidance, dramaturgy and&nbsp;quality.
-        </h1>
-        <a
-          href="#booking"
-          className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium border border-white/30 text-white rounded-full hover:bg-white/10 transition-colors"
-        >
-          Book a Session
-        </a>
-      </div>
-
-      {/* .LIVE large text at bottom */}
-      <div className="relative z-10 w-full overflow-hidden -mb-2 md:-mb-4">
-        <p
-          className="text-[22vw] md:text-[18vw] lg:text-[16vw] font-black leading-[0.85] tracking-tighter text-white/[0.07] select-none text-center whitespace-nowrap"
+      {/* .LIVE SVG overlay — centered, full-width, blend mode exclusion */}
+      <div className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/live.svg"
+          alt=""
           aria-hidden="true"
-        >
-          .LIVE
-        </p>
+          className="w-full h-auto max-h-[45vh] object-contain select-none"
+        />
+      </div>
+
+      {/* Content — lower quarter, offset 1/3 from left (3-col grid: 1 blank + 2 content) */}
+      <div className="relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          {/* 1st column: blank spacer */}
+          <div className="hidden lg:block" />
+          {/* 2nd + 3rd columns: text + CTA */}
+          <div className="lg:col-span-2">
+            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8">
+              Curated Audio &amp; Video Creation
+            </p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[3.5rem] font-semibold leading-[1.15] tracking-tight text-white max-w-3xl mb-8 md:mb-12">
+              Podcasts, audiobooks and voiceovers with guidance, dramaturgy and&nbsp;quality.
+            </h1>
+            <a
+              href="#booking"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium border border-white/30 text-white rounded-full hover:bg-white/10 transition-colors"
+            >
+              Book a Session
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
