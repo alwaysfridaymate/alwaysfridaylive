@@ -5,7 +5,7 @@
   --color-surface: #161616;
   --color-text: #ffffff;
   --color-text-muted: #999999;
-  --color-accent: #00d4ff;
+  --color-accent: #ffffff;
   --color-border: #2a2a2a;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-display: "Inter", system-ui, -apple-system, sans-serif;
@@ -22,6 +22,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Hide default cursor on desktop when custom cursor is active */
+@media (pointer: fine) and (min-width: 768px) {
+  * {
+    cursor: none !important;
+  }
 }
 
 /* Thin scrollbar */
@@ -44,4 +51,17 @@ body {
 /* SVG with reduced opacity for layered effect */
 .svg-heading-dim svg path {
   fill: #1a1a1a;
+}
+
+/* ─── Scroll-triggered fade-in / motion ─── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -1,34 +1,226 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef, useState, useCallback } from "react";
+
+/* ═══════════════════════════════════════════
+   HOOKS
+   ═══════════════════════════════════════════ */
+
+/** Intersection-observer fade-in */
+function useFadeIn<T extends HTMLElement>(
+  threshold = 0.15,
+  rootMargin = "0px 0px -60px 0px"
+) {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("in-view");
+          io.unobserve(el);
+        }
+      },
+      { threshold, rootMargin }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [threshold, rootMargin]);
+  return ref;
+}
+
+/** Parallax: returns a translateY value driven by scroll position */
+function useParallax(speed = 0.08) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [y, setY] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const centre = rect.top + rect.height / 2;
+    const viewH = window.innerHeight;
+    const offset = (centre - viewH / 2) * speed;
+    setY(offset);
+  }, [speed]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  return { ref, y };
+}
+
+/* ═══════════════════════════════════════════
+   GRID LINES  (3 lines → 4 columns, md+ only)
+   ═══════════════════════════════════════════ */
+function GridLines() {
+  return (
+    <div
+      className="hidden md:block fixed inset-0 z-[999] pointer-events-none"
+      aria-hidden="true"
+    >
+      <div className="mx-auto h-full max-w-[1920px] px-6 md:px-12 lg:px-16">
+        <div className="relative h-full grid grid-cols-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="absolute top-0 bottom-0 w-px bg-[#5E0058]"
+              style={{ left: `${(i / 4) * 100}%` }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR  (20px, blend-difference)
+   ═══════════════════════════════════════════ */
+function CustomCursor() {
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let x = -100,
+      y = -100;
+    let rX = -100,
+      rY = -100;
+    let rafId: number;
+
+    const move = (e: MouseEvent) => {
+      x = e.clientX;
+      y = e.clientY;
+    };
+
+    const render = () => {
+      rX += (x - rX) * 0.15;
+      rY += (y - rY) * 0.15;
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${rX - 10}px, ${rY - 10}px)`;
+      }
+      rafId = requestAnimationFrame(render);
+    };
+
+    // Hide on touch devices
+    const isTouchDevice =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    if (isTouchDevice) return;
+
+    window.addEventListener("mousemove", move, { passive: true });
+    rafId = requestAnimationFrame(render);
+    return () => {
+      window.removeEventListener("mousemove", move);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={cursorRef}
+      className="fixed top-0 left-0 z-[9999] pointer-events-none mix-blend-difference hidden md:block"
+      style={{
+        width: 20,
+        height: 20,
+        borderRadius: "50%",
+        backgroundColor: "#ffffff",
+        willChange: "transform",
+      }}
+      aria-hidden="true"
+    />
+  );
+}
+
+/* ═══════════════════════════════════════════
+   PARALLAX IMAGE WRAPPER
+   ═══════════════════════════════════════════ */
+function ParallaxImage({
+  src,
+  alt,
+  aspect = "4/3",
+  sizes,
+  speed = 0.08,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  aspect?: string;
+  sizes: string;
+  speed?: number;
+  className?: string;
+}) {
+  const { ref, y } = useParallax(speed);
+  return (
+    <div ref={ref} className={`relative overflow-hidden ${className}`} style={{ aspectRatio: aspect }}>
+      <div
+        className="absolute inset-[-15%] will-change-transform"
+        style={{ transform: `translateY(${y}px)` }}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover grayscale"
+          sizes={sizes}
+        />
+      </div>
+    </div>
+  );
+}
 
 /* ─── NAV ─── */
 function Nav() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0d]/80 backdrop-blur-md border-b border-white/5">
+    <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
       <nav className="mx-auto flex items-center justify-between px-6 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
-        <a href="#" className="text-sm md:text-base font-semibold tracking-[0.2em] text-white uppercase">
+        <a
+          href="#"
+          className="text-sm md:text-base font-semibold tracking-[0.2em] text-white uppercase"
+        >
           ALWAYSFRIDAY
         </a>
         {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-8 lg:gap-12">
-          <a href="#services" className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase">
+          <a
+            href="#services"
+            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
+          >
             Services
           </a>
-          <a href="#approach" className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase">
+          <a
+            href="#approach"
+            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
+          >
             Approach
           </a>
-          <a href="#pricing" className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase">
+          <a
+            href="#pricing"
+            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
+          >
             Pricing
           </a>
         </div>
         <a
           href="#booking"
-          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-xs tracking-[0.15em] uppercase font-medium bg-[#00d4ff] text-[#0d0d0d] rounded-full hover:bg-[#00b8e0] transition-colors"
+          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
         >
           Booking
         </a>
         {/* Mobile menu button */}
         <button className="md:hidden text-white" aria-label="Menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
             <path d="M3 8h18M3 16h18" />
           </svg>
         </button>
@@ -39,6 +231,8 @@ function Nav() {
 
 /* ─── HERO ─── */
 function Hero() {
+  const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px");
+
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d] isolate">
       {/* Background image */}
@@ -64,18 +258,20 @@ function Hero() {
         />
       </div>
 
-      {/* Content — lower quarter, offset 1/3 from left (3-col grid: 1 blank + 2 content) */}
-      <div className="relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20">
+      {/* Content — lower quarter, offset 1/3 from left */}
+      <div
+        ref={headRef}
+        className="fade-up relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3">
-          {/* 1st column: blank spacer */}
           <div className="hidden lg:block" />
-          {/* 2nd + 3rd columns: text + CTA */}
           <div className="lg:col-span-2">
             <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8">
               Curated Audio &amp; Video Creation
             </p>
             <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8 md:mb-12">
-              Podcasts, audiobooks and voiceovers with guidance, dramaturgy and&nbsp;quality.
+              Podcasts, audiobooks and voiceovers with guidance, dramaturgy
+              and&nbsp;quality.
             </h1>
             <a
               href="#booking"
@@ -92,10 +288,16 @@ function Hero() {
 
 /* ─── ABOUT ─── */
 function About() {
+  const h2Ref = useFadeIn<HTMLDivElement>();
+  const bodyRef = useFadeIn<HTMLDivElement>();
+
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline — left-aligned, 3/4 width (3 of 4 columns) */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+      {/* Headline */}
+      <div
+        ref={h2Ref}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
             <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
@@ -105,13 +307,17 @@ function About() {
         </div>
       </div>
 
-      {/* Body text + CTA — same position as hero text (1/3 offset) */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-20 md:mb-28">
+      {/* Body text + CTA */}
+      <div
+        ref={bodyRef}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-20 md:mb-28"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
             <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-              Our approach is based on focus, calm environment and thoughtful guidance. Every project is treated with attention and care.
+              Our approach is based on focus, calm environment and thoughtful
+              guidance. Every project is treated with attention and care.
             </p>
             <a
               href="#pricing"
@@ -140,10 +346,16 @@ function About() {
 
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
+  const headRef = useFadeIn<HTMLDivElement>();
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1);
+
   return (
     <section id="services" className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline — same as About: left-aligned, 3/4 width, 52px, bold, uppercase */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+      {/* Headline */}
+      <div
+        ref={headRef}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
             <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
@@ -153,23 +365,29 @@ function Services() {
         </div>
       </div>
 
-      {/* 4 service blocks — 2/3 width, 1/3 offset (1 blank + 2 content cols), 2 rows × 2 items */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+      {/* 4 service blocks */}
+      <div
+        ref={blocksRef}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3">
-          {/* Blank spacer column */}
           <div className="hidden lg:block" />
-          {/* 2-column content area */}
           <div className="lg:col-span-2">
-            {/* Row 1 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
               <div>
                 <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
                   Podcast Production
                 </h3>
                 <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Curated formats
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Dramaturgy
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Recording &amp; Post-production
+                  </li>
                 </ul>
               </div>
               <div>
@@ -177,9 +395,15 @@ function Services() {
                   Video Content
                 </h3>
                 <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Video podcasts
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Interviews
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Branded formats
+                  </li>
                 </ul>
               </div>
               <div>
@@ -187,9 +411,15 @@ function Services() {
                   Audiobooks &amp; Voice
                 </h3>
                 <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Audiobooks
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Voiceover
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Commercials
+                  </li>
                 </ul>
               </div>
               <div>
@@ -197,9 +427,15 @@ function Services() {
                   Creative Guidance
                 </h3>
                 <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">Concept</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Direction</li>
-                  <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Concept
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Direction
+                  </li>
+                  <li className="text-sm text-white/50 leading-relaxed">
+                    Strategy
+                  </li>
                 </ul>
               </div>
             </div>
@@ -207,55 +443,58 @@ function Services() {
         </div>
       </div>
 
-      {/* Image blocks — 3 columns, each 1/3 width, staggered vertical positions */}
+      {/* Image blocks — 3 columns, staggered */}
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 md:items-start">
           {/* Image 01 — highest */}
           <div className="md:mt-0 p-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <Image
-                src="/images/camera.jpg"
-                alt="Sony camera setup"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/camera.jpg"
+              alt="Sony camera setup"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              speed={0.06}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                01
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Sony FX3 · GM 24mm · GM 50mm
+              </p>
             </div>
           </div>
           {/* Image 02 — lowest */}
           <div className="md:mt-48 p-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <Image
-                src="/images/studio.jpg"
-                alt="Recording studio setup"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/studio.jpg"
+              alt="Recording studio setup"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              speed={0.12}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                02
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
           {/* Image 03 — mid-low */}
           <div className="md:mt-24 p-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <Image
-                src="/images/mic.jpg"
-                alt="Studio microphone"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/mic.jpg"
+              alt="Studio microphone"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              speed={0.04}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                03
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
         </div>
@@ -266,26 +505,38 @@ function Services() {
 
 /* ─── APPROACH STATEMENT ─── */
 function ApproachStatement() {
+  const h2Ref = useFadeIn<HTMLDivElement>();
+  const bodyRef = useFadeIn<HTMLDivElement>();
+
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline — same as Services: left-aligned, 3/4 width, 52px, bold, uppercase */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+      {/* Headline */}
+      <div
+        ref={h2Ref}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
             <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
-              We guide the creative process from concept and dramaturgy through recording and post&#8209;production.
+              We guide the creative process from concept and dramaturgy through
+              recording and post&#8209;production.
             </h2>
           </div>
         </div>
       </div>
 
-      {/* Body text + CTA — same position as About (1/3 offset) */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+      {/* Body text + CTA */}
+      <div
+        ref={bodyRef}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
             <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-              Our studio offers a rare combination of professional infrastructure and a unique setting — whether for a few hours or several focused days.
+              Our studio offers a rare combination of professional
+              infrastructure and a unique setting — whether for a few hours or
+              several focused days.
             </p>
             <a
               href="#booking"
@@ -302,11 +553,12 @@ function ApproachStatement() {
 
 /* ─── APPROACH (HOW) ─── */
 function Approach() {
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1);
+
   return (
     <section id="approach" className="relative py-24 md:py-32 lg:py-40">
-      {/* APPROACH headline + HOW SVG — layered, headline has blend-difference */}
+      {/* APPROACH headline + HOW SVG */}
       <div className="relative mb-16 md:mb-20">
-        {/* HOW SVG — full width, white */}
         <div className="w-full overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -317,7 +569,6 @@ function Approach() {
             style={{ filter: "brightness(0) invert(1)" }}
           />
         </div>
-        {/* APPROACH headline overlaid on top of HOW SVG with blend-difference */}
         <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-16 mix-blend-difference">
           <div className="max-w-[1920px] mx-auto w-full">
             <div className="grid grid-cols-1 lg:grid-cols-4">
@@ -331,8 +582,11 @@ function Approach() {
         </div>
       </div>
 
-      {/* 4 process blocks — same layout as Services (1/3 offset, 2×2 grid) */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+      {/* 4 process blocks */}
+      <div
+        ref={blocksRef}
+        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
@@ -374,71 +628,75 @@ function Approach() {
         </div>
       </div>
 
-      {/* 4 image blocks — 4-column grid, cascading stagger (highest → lowest left to right) */}
+      {/* 4 image blocks — 4-column grid, cascading stagger */}
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:items-start">
-          {/* Image 01 — highest */}
           <div className="lg:mt-0 p-2">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <Image
-                src="/images/camera.jpg"
-                alt="Sony camera"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 1024px) 50vw, 25vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/camera.jpg"
+              alt="Sony camera"
+              aspect="3/4"
+              sizes="(max-width: 1024px) 50vw, 25vw"
+              speed={0.05}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                01
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
-          {/* Image 02 — stepped down */}
           <div className="lg:mt-20 p-2">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <Image
-                src="/images/mixer.jpg"
-                alt="Audio mixing console"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 1024px) 50vw, 25vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/mixer.jpg"
+              alt="Audio mixing console"
+              aspect="3/4"
+              sizes="(max-width: 1024px) 50vw, 25vw"
+              speed={0.1}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                02
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
-          {/* Image 03 — stepped down further */}
           <div className="lg:mt-40 p-2">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <Image
-                src="/images/hero.jpg"
-                alt="Studio microphone close-up"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 1024px) 50vw, 25vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/hero.jpg"
+              alt="Studio microphone close-up"
+              aspect="3/4"
+              sizes="(max-width: 1024px) 50vw, 25vw"
+              speed={0.07}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                03
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
-          {/* Image 04 — lowest */}
           <div className="lg:mt-60 p-2">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <Image
-                src="/images/books.jpg"
-                alt="Studio details"
-                fill
-                className="object-cover grayscale"
-                sizes="(max-width: 1024px) 50vw, 25vw"
-              />
-            </div>
+            <ParallaxImage
+              src="/images/books.jpg"
+              alt="Studio details"
+              aspect="3/4"
+              sizes="(max-width: 1024px) 50vw, 25vw"
+              speed={0.13}
+            />
             <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                04
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                Description
+              </p>
             </div>
           </div>
         </div>
@@ -464,26 +722,19 @@ function When() {
       </div>
 
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        {/* Overlapping images */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-3">
-          <div className="relative aspect-[4/3] overflow-hidden">
-            <Image
-              src="/images/studio-reflection.jpg"
-              alt="Studio reflection in window"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
-          <div className="relative aspect-[4/3] overflow-hidden">
-            <Image
-              src="/images/mixer.jpg"
-              alt="Audio mixing console detail"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
+          <ParallaxImage
+            src="/images/studio-reflection.jpg"
+            alt="Studio reflection in window"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            speed={0.06}
+          />
+          <ParallaxImage
+            src="/images/mixer.jpg"
+            alt="Audio mixing console detail"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            speed={0.1}
+          />
         </div>
       </div>
     </section>
@@ -493,7 +744,10 @@ function When() {
 /* ─── FOOTER ─── */
 function Footer() {
   return (
-    <footer id="booking" className="border-t border-white/5 py-16 md:py-20 lg:py-24 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+    <footer
+      id="booking"
+      className="border-t border-white/5 py-16 md:py-20 lg:py-24 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
+    >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
         {/* Left — brand */}
         <div className="lg:col-span-4">
@@ -509,17 +763,49 @@ function Footer() {
         <div className="lg:col-span-4">
           <div className="flex flex-col sm:flex-row gap-8">
             <div>
-              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">Navigation</p>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                Navigation
+              </p>
               <ul className="space-y-2">
-                <li><a href="#services" className="text-sm text-white/60 hover:text-white transition-colors">Services</a></li>
-                <li><a href="#approach" className="text-sm text-white/60 hover:text-white transition-colors">Approach</a></li>
-                <li><a href="#pricing" className="text-sm text-white/60 hover:text-white transition-colors">Pricing</a></li>
+                <li>
+                  <a
+                    href="#services"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    Services
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#approach"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    Approach
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#pricing"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    Pricing
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
-              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">Contact</p>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                Contact
+              </p>
               <ul className="space-y-2">
-                <li><a href="mailto:hello@alwaysfriday.live" className="text-sm text-white/60 hover:text-white transition-colors">hello@alwaysfriday.live</a></li>
+                <li>
+                  <a
+                    href="mailto:hello@alwaysfriday.live"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
+                  >
+                    hello@alwaysfriday.live
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -529,7 +815,7 @@ function Footer() {
         <div className="lg:col-span-4 lg:text-right">
           <a
             href="#booking"
-            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-[#00d4ff] text-[#0d0d0d] rounded-full hover:bg-[#00b8e0] transition-colors"
+            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
           >
             Book a Session
           </a>
@@ -557,6 +843,8 @@ function Footer() {
 export default function Home() {
   return (
     <>
+      <CustomCursor />
+      <GridLines />
       <Nav />
       <main>
         <Hero />
