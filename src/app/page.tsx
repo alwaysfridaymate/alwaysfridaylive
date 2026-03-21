@@ -140,87 +140,122 @@ function About() {
 
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
-  const services = [
-    {
-      title: "Podcast Production",
-      items: ["Curated formats", "Dramaturgy", "Recording & Post-production"],
-    },
-    {
-      title: "Video Content",
-      items: ["Video podcasts", "Interviews", "Branded formats"],
-    },
-    {
-      title: "Audiobooks & Voice",
-      items: ["Audiobooks", "Voiceover", "Commercials"],
-    },
-    {
-      title: "Creative Guidance",
-      items: ["Concept", "Direction", "Strategy"],
-    },
-  ];
-
   return (
-    <section id="services" className="relative py-16 md:py-24 lg:py-32">
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/40 uppercase mb-12 md:mb-16">
-          Services
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-6">
-          {services.map((service) => (
-            <div key={service.title}>
-              <h3 className="text-sm md:text-base font-semibold tracking-wide uppercase text-white mb-5">
-                {service.title}
-              </h3>
-              <ul className="space-y-2">
-                {service.items.map((item) => (
-                  <li key={item} className="text-sm text-white/50 leading-relaxed">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+    <section id="services" className="relative py-24 md:py-32 lg:py-40">
+      {/* Headline — same as About: left-aligned, 3/4 width, 52px, bold, uppercase */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-4">
+          <div className="lg:col-span-3">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+              Services
+            </h2>
+          </div>
         </div>
       </div>
 
-      {/* Services Image Grid */}
-      <div className="mt-20 md:mt-28 lg:mt-36 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-3">
-          <div className="relative aspect-[4/3] overflow-hidden">
-            <Image
-              src="/images/camera.jpg"
-              alt="Sony camera setup"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">01</p>
+      {/* 4 service blocks — 2/3 width, 1/3 offset (1 blank + 2 content cols), 2 rows × 2 items */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          {/* Blank spacer column */}
+          <div className="hidden lg:block" />
+          {/* 2-column content area */}
+          <div className="lg:col-span-2">
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Podcast Production
+                </h3>
+                <ul className="space-y-2">
+                  <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Video Content
+                </h3>
+                <ul className="space-y-2">
+                  <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Audiobooks &amp; Voice
+                </h3>
+                <ul className="space-y-2">
+                  <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Creative Guidance
+                </h3>
+                <ul className="space-y-2">
+                  <li className="text-sm text-white/50 leading-relaxed">Concept</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Direction</li>
+                  <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
+                </ul>
+              </div>
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden">
-            <Image
-              src="/images/studio.jpg"
-              alt="Recording studio setup"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">02</p>
+        </div>
+      </div>
+
+      {/* Image blocks — 3 columns, each 1/3 width, staggered vertical positions */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 md:items-start">
+          {/* Image 01 — highest */}
+          <div className="md:mt-0 p-2">
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src="/images/camera.jpg"
+                alt="Sony camera setup"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
             </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden">
-            <Image
-              src="/images/mic.jpg"
-              alt="Studio microphone"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">03</p>
+          {/* Image 02 — lowest */}
+          <div className="md:mt-48 p-2">
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src="/images/studio.jpg"
+                alt="Recording studio setup"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            </div>
+          </div>
+          {/* Image 03 — mid-low */}
+          <div className="md:mt-24 p-2">
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src="/images/mic.jpg"
+                alt="Studio microphone"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
             </div>
           </div>
         </div>
