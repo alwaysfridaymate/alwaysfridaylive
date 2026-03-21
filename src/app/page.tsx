@@ -93,27 +93,46 @@ function Hero() {
 /* ─── ABOUT ─── */
 function About() {
   return (
-    <section className="relative py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
-        <div className="lg:col-span-8 lg:col-start-4">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.1] tracking-tight text-white mb-10 md:mb-14">
-            From idea to finished content. In one&nbsp;place.
-          </h2>
-          <div className="max-w-2xl space-y-6">
-            <p className="text-sm md:text-base text-white/60 leading-relaxed">
-              Alwaysfriday.live is a curated studio for audio and video content with long-term value.
-            </p>
-            <p className="text-sm md:text-base text-white/60 leading-relaxed">
+    <section className="relative py-24 md:py-32 lg:py-40">
+      {/* Headline — left-aligned, 3/4 width (3 of 4 columns) */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-4">
+          <div className="lg:col-span-3">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+              From idea to finished content. In one&nbsp;place.
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      {/* Body text + CTA — same position as hero text (1/3 offset) */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-20 md:mb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          <div className="hidden lg:block" />
+          <div className="lg:col-span-2">
+            <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
               Our approach is based on focus, calm environment and thoughtful guidance. Every project is treated with attention and care.
             </p>
+            <a
+              href="#pricing"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+            >
+              Pricing
+            </a>
           </div>
-          <a
-            href="#pricing"
-            className="inline-flex items-center justify-center mt-10 md:mt-14 px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium border border-white/30 text-white rounded-full hover:bg-white/10 transition-colors"
-          >
-            Pricing
-          </a>
         </div>
+      </div>
+
+      {/* WHAT SVG — full width, white, blend mode difference */}
+      <div className="w-full overflow-hidden mix-blend-difference">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/what.svg"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-auto"
+          style={{ filter: "brightness(0) invert(1)" }}
+        />
       </div>
     </section>
   );
@@ -142,18 +161,6 @@ function Services() {
 
   return (
     <section id="services" className="relative py-16 md:py-24 lg:py-32">
-      {/* WHAT — large background SVG */}
-      <div className="w-full overflow-hidden mb-12 md:mb-16 lg:mb-20 px-6 md:px-12 lg:px-16">
-        <Image
-          src="/images/what.svg"
-          alt=""
-          width={1632}
-          height={324}
-          className="w-full h-auto opacity-[0.08]"
-          aria-hidden="true"
-        />
-      </div>
-
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/40 uppercase mb-12 md:mb-16">
           Services
