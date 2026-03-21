@@ -7,12 +7,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
    HOOKS
    ═══════════════════════════════════════════ */
 
-/** Intersection-observer fade-in */
+/** Intersection-observer fade-in + subtle text parallax */
 function useFadeIn<T extends HTMLElement>(
   threshold = 0.15,
-  rootMargin = "0px 0px -60px 0px"
+  rootMargin = "0px 0px -60px 0px",
+  parallaxSpeed = 0
 ) {
   const ref = useRef<T>(null);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -28,6 +30,39 @@ function useFadeIn<T extends HTMLElement>(
     io.observe(el);
     return () => io.disconnect();
   }, [threshold, rootMargin]);
+
+  /* Subtle text parallax — only when speed > 0, waits for fade-in to finish */
+  useEffect(() => {
+    if (!parallaxSpeed) return;
+    const el = ref.current;
+    if (!el) return;
+    let rafId: number;
+    let active = false;
+
+    const onScroll = () => {
+      if (!active) {
+        if (!el.classList.contains("in-view")) return;
+        active = true;
+        /* Let the CSS transition finish before taking over transform */
+        setTimeout(() => {
+          el.style.transition = "none";
+        }, 950);
+      }
+      rafId = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const centre = rect.top + rect.height / 2;
+        const offset = (centre - window.innerHeight / 2) * parallaxSpeed;
+        el.style.transform = `translateY(${offset}px)`;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, [parallaxSpeed]);
+
   return ref;
 }
 
@@ -231,7 +266,7 @@ function Nav() {
 
 /* ─── HERO ─── */
 function Hero() {
-  const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px");
+  const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.018);
 
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d] isolate">
@@ -288,8 +323,8 @@ function Hero() {
 
 /* ─── ABOUT ─── */
 function About() {
-  const h2Ref = useFadeIn<HTMLDivElement>();
-  const bodyRef = useFadeIn<HTMLDivElement>();
+  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.025);
+  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.015);
 
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
@@ -346,8 +381,8 @@ function About() {
 
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
-  const headRef = useFadeIn<HTMLDivElement>();
-  const blocksRef = useFadeIn<HTMLDivElement>(0.1);
+  const headRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.022);
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.012);
 
   return (
     <section id="services" className="relative py-24 md:py-32 lg:py-40">
@@ -505,8 +540,8 @@ function Services() {
 
 /* ─── APPROACH STATEMENT ─── */
 function ApproachStatement() {
-  const h2Ref = useFadeIn<HTMLDivElement>();
-  const bodyRef = useFadeIn<HTMLDivElement>();
+  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.028);
+  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.016);
 
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
@@ -553,7 +588,7 @@ function ApproachStatement() {
 
 /* ─── APPROACH (HOW) ─── */
 function Approach() {
-  const blocksRef = useFadeIn<HTMLDivElement>(0.1);
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.014);
 
   return (
     <section id="approach" className="relative py-24 md:py-32 lg:py-40">
