@@ -267,21 +267,33 @@ function Services() {
 /* ─── APPROACH STATEMENT ─── */
 function ApproachStatement() {
   return (
-    <section className="py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
-        <div className="lg:col-span-8 lg:col-start-4">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.1] tracking-tight text-white mb-10 md:mb-14">
-            We guide the creative process from concept and dramaturgy through recording and post&#8209;production.
-          </h2>
-          <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-            Our studio offers a rare combination of professional infrastructure and a unique setting — whether for a few hours or several focused days.
-          </p>
-          <a
-            href="#booking"
-            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium border border-white/30 text-white rounded-full hover:bg-white/10 transition-colors"
-          >
-            Book a Session
-          </a>
+    <section className="relative py-24 md:py-32 lg:py-40">
+      {/* Headline — same as Services: left-aligned, 3/4 width, 52px, bold, uppercase */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-4">
+          <div className="lg:col-span-3">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+              We guide the creative process from concept and dramaturgy through recording and post&#8209;production.
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      {/* Body text + CTA — same position as About (1/3 offset) */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          <div className="hidden lg:block" />
+          <div className="lg:col-span-2">
+            <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
+              Our studio offers a rare combination of professional infrastructure and a unique setting — whether for a few hours or several focused days.
+            </p>
+            <a
+              href="#booking"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+            >
+              Book a Session
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -290,95 +302,143 @@ function ApproachStatement() {
 
 /* ─── APPROACH (HOW) ─── */
 function Approach() {
-  const steps = [
-    { title: "Idea", desc: "We help shape your idea and format." },
-    { title: "Direction", desc: "Dramaturgy, preparation and guidance." },
-    { title: "Production", desc: "Audio & video recording in our studio." },
-    { title: "Output", desc: "Post-production and ready-to-publish content." },
-  ];
-
   return (
-    <section id="approach" className="relative py-16 md:py-24 lg:py-32">
-      {/* HOW — large background SVG */}
-      <div className="w-full overflow-hidden mb-12 md:mb-16 lg:mb-20 px-6 md:px-12 lg:px-16">
-        <Image
-          src="/images/how.svg"
-          alt=""
-          width={1367}
-          height={324}
-          className="w-full h-auto opacity-[0.08]"
-          aria-hidden="true"
-        />
-      </div>
-
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/40 uppercase mb-12 md:mb-16">
-          Approach
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-6">
-          {steps.map((step) => (
-            <div key={step.title}>
-              <h3 className="text-sm md:text-base font-semibold tracking-wide uppercase text-white mb-3">
-                {step.title}
-              </h3>
-              <p className="text-sm text-white/50 leading-relaxed">
-                {step.desc}
-              </p>
+    <section id="approach" className="relative py-24 md:py-32 lg:py-40">
+      {/* APPROACH headline + HOW SVG — layered, headline has blend-difference */}
+      <div className="relative mb-16 md:mb-20">
+        {/* HOW SVG — full width, white */}
+        <div className="w-full overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/how.svg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
+        </div>
+        {/* APPROACH headline overlaid on top of HOW SVG with blend-difference */}
+        <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-16 mix-blend-difference">
+          <div className="max-w-[1920px] mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-4">
+              <div className="lg:col-span-3">
+                <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+                  Approach
+                </h2>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
-      {/* Approach Image Grid — 4 images */}
-      <div className="mt-20 md:mt-28 lg:mt-36 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-3">
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <Image
-              src="/images/camera.jpg"
-              alt="Sony camera"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">01</p>
+      {/* 4 process blocks — same layout as Services (1/3 offset, 2×2 grid) */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          <div className="hidden lg:block" />
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Idea
+                </h3>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  We help shape your idea and format.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Direction
+                </h3>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Dramaturgy, preparation and guidance.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Production
+                </h3>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Audio &amp; video recording in our studio.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                  Output
+                </h3>
+                <p className="text-sm text-white/50 leading-relaxed">
+                  Post-production and ready-to-publish content.
+                </p>
+              </div>
             </div>
           </div>
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <Image
-              src="/images/mixer.jpg"
-              alt="Audio mixing console"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">02</p>
+        </div>
+      </div>
+
+      {/* 4 image blocks — 4-column grid, cascading stagger (highest → lowest left to right) */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:items-start">
+          {/* Image 01 — highest */}
+          <div className="lg:mt-0 p-2">
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/images/camera.jpg"
+                alt="Sony camera"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 1024px) 50vw, 25vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <Image
-              src="/images/hero.jpg"
-              alt="Studio microphone close-up"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">03</p>
+          {/* Image 02 — stepped down */}
+          <div className="lg:mt-20 p-2">
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/images/mixer.jpg"
+                alt="Audio mixing console"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 1024px) 50vw, 25vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
             </div>
           </div>
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <Image
-              src="/images/books.jpg"
-              alt="Studio details"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <p className="text-[10px] tracking-[0.2em] text-white/50 uppercase">04</p>
+          {/* Image 03 — stepped down further */}
+          <div className="lg:mt-40 p-2">
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/images/hero.jpg"
+                alt="Studio microphone close-up"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 1024px) 50vw, 25vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            </div>
+          </div>
+          {/* Image 04 — lowest */}
+          <div className="lg:mt-60 p-2">
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/images/books.jpg"
+                alt="Studio details"
+                fill
+                className="object-cover grayscale"
+                sizes="(max-width: 1024px) 50vw, 25vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
             </div>
           </div>
         </div>
