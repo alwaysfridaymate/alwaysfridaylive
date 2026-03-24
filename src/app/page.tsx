@@ -366,7 +366,7 @@ function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
-            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8">
+            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8 mix-blend-difference">
               Curated Audio &amp; Video Creation
             </p>
             <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8 md:mb-12">
@@ -733,14 +733,14 @@ function Approach() {
       {/* 4 image blocks — 4-column grid, cascading stagger */}
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:items-start">
-          {/* 1st — highest (mt-0) */}
-          <div className="lg:mt-0 p-2">
+          {/* 1st — highest (mt-0), slowest block */}
+          <ParallaxBlock speed={0.035} className="lg:mt-0 p-2">
             <ParallaxImage
               src="/images/camera.jpg"
               alt="Sony camera"
               aspect="3/4"
               sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.05}
+              speed={0.02}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -750,15 +750,15 @@ function Approach() {
                 Description
               </p>
             </div>
-          </div>
-          {/* 2nd — lowest (mt-60) */}
-          <div className="lg:mt-60 p-2">
+          </ParallaxBlock>
+          {/* 2nd — lowest (mt-60), fastest block */}
+          <ParallaxBlock speed={0.09} className="lg:mt-60 p-2">
             <ParallaxImage
               src="/images/mixer.jpg"
               alt="Audio mixing console"
               aspect="3/4"
               sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.1}
+              speed={0.03}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -768,15 +768,15 @@ function Approach() {
                 Description
               </p>
             </div>
-          </div>
-          {/* 3rd — middle (mt-24) */}
-          <div className="lg:mt-24 p-2">
+          </ParallaxBlock>
+          {/* 3rd — middle (mt-24), medium block */}
+          <ParallaxBlock speed={0.06} className="lg:mt-24 p-2">
             <ParallaxImage
               src="/images/hero.jpg"
               alt="Studio microphone close-up"
               aspect="3/4"
               sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.07}
+              speed={0.02}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -786,15 +786,15 @@ function Approach() {
                 Description
               </p>
             </div>
-          </div>
-          {/* 4th — lower-middle (mt-48) */}
-          <div className="lg:mt-48 p-2">
+          </ParallaxBlock>
+          {/* 4th — lower-middle (mt-48), medium-fast block */}
+          <ParallaxBlock speed={0.075} className="lg:mt-48 p-2">
             <ParallaxImage
               src="/images/books.jpg"
               alt="Studio details"
               aspect="3/4"
               sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.13}
+              speed={0.03}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -804,7 +804,7 @@ function Approach() {
                 Description
               </p>
             </div>
-          </div>
+          </ParallaxBlock>
         </div>
       </div>
     </section>
