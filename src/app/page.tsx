@@ -225,6 +225,54 @@ function ParallaxImage({
   );
 }
 
+/* ═══════════════════════════════════════════
+   PARALLAX BLOCK — moves entire block (image+desc)
+   ═══════════════════════════════════════════ */
+function ParallaxBlock({
+  children,
+  speed = 0.05,
+  className = "",
+}: {
+  children: React.ReactNode;
+  speed?: number;
+  className?: string;
+}) {
+  const { ref, y } = useParallax(speed);
+  return (
+    <div
+      ref={ref}
+      className={`will-change-transform ${className}`}
+      style={{ transform: `translateY(${y}px)` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   SVG PARALLAX — slower than scroll for SVG elements
+   ═══════════════════════════════════════════ */
+function ParallaxSvg({
+  children,
+  speed = -0.06,
+  className = "",
+}: {
+  children: React.ReactNode;
+  speed?: number;
+  className?: string;
+}) {
+  const { ref, y } = useParallax(speed);
+  return (
+    <div
+      ref={ref}
+      className={`will-change-transform ${className}`}
+      style={{ transform: `translateY(${y}px)` }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ─── NAV ─── */
 function Nav() {
   return (
@@ -283,7 +331,7 @@ function Nav() {
 
 /* ─── HERO ─── */
 function Hero() {
-  const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.018);
+  const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.05);
 
   return (
     <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d] isolate">
@@ -299,8 +347,8 @@ function Hero() {
         />
       </div>
 
-      {/* .LIVE SVG overlay — centered, full-width, blend mode exclusion */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
+      {/* .LIVE SVG overlay — centered, full-width, blend mode exclusion, parallax (slower) */}
+      <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/live.svg"
@@ -308,7 +356,7 @@ function Hero() {
           aria-hidden="true"
           className="w-full h-auto max-h-[45vh] object-contain select-none"
         />
-      </div>
+      </ParallaxSvg>
 
       {/* Content — lower quarter, offset 1/3 from left */}
       <div
@@ -340,8 +388,8 @@ function Hero() {
 
 /* ─── ABOUT ─── */
 function About() {
-  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.025);
-  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.015);
+  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.065);
+  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
 
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
@@ -381,25 +429,27 @@ function About() {
         </div>
       </div>
 
-      {/* WHAT SVG — full width, white, blend mode difference */}
-      <div className="w-full overflow-hidden mix-blend-difference">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/what.svg"
-          alt=""
-          aria-hidden="true"
-          className="w-full h-auto"
-          style={{ filter: "brightness(0) invert(1)" }}
-        />
-      </div>
+      {/* WHAT SVG — full width, white, blend mode difference, parallax (slower) */}
+      <ParallaxSvg speed={-0.06}>
+        <div className="w-full overflow-hidden mix-blend-difference">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/what.svg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
+        </div>
+      </ParallaxSvg>
     </section>
   );
 }
 
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
-  const headRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.022);
-  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.012);
+  const headRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.035);
 
   return (
     <section id="services" className="relative py-24 md:py-32 lg:py-40">
@@ -495,16 +545,16 @@ function Services() {
         </div>
       </div>
 
-      {/* Image blocks — 3 columns, staggered */}
+      {/* Image blocks — 3 columns, staggered, full-block parallax */}
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 md:items-start">
-          {/* Image 01 — highest */}
-          <div className="md:mt-0 p-2">
+          {/* Image 01 — highest, slowest */}
+          <ParallaxBlock speed={0.04} className="md:mt-0 p-2">
             <ParallaxImage
               src="/images/camera.jpg"
               alt="Sony camera setup"
               sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.06}
+              speed={0.02}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -514,14 +564,14 @@ function Services() {
                 Sony FX3 · GM 24mm · GM 50mm
               </p>
             </div>
-          </div>
-          {/* Image 02 — lowest */}
-          <div className="md:mt-48 p-2">
+          </ParallaxBlock>
+          {/* Image 02 — lowest, fastest */}
+          <ParallaxBlock speed={0.09} className="md:mt-48 p-2">
             <ParallaxImage
               src="/images/studio.jpg"
               alt="Recording studio setup"
               sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.12}
+              speed={0.03}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -531,14 +581,14 @@ function Services() {
                 Description
               </p>
             </div>
-          </div>
-          {/* Image 03 — mid-low */}
-          <div className="md:mt-24 p-2">
+          </ParallaxBlock>
+          {/* Image 03 — mid, medium speed */}
+          <ParallaxBlock speed={0.065} className="md:mt-24 p-2">
             <ParallaxImage
               src="/images/mic.jpg"
               alt="Studio microphone"
               sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.04}
+              speed={0.02}
             />
             <div className="flex items-baseline justify-between mt-3 px-1">
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
@@ -548,7 +598,7 @@ function Services() {
                 Description
               </p>
             </div>
-          </div>
+          </ParallaxBlock>
         </div>
       </div>
     </section>
@@ -557,8 +607,8 @@ function Services() {
 
 /* ─── APPROACH STATEMENT ─── */
 function ApproachStatement() {
-  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.028);
-  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.016);
+  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.07);
+  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.045);
 
   return (
     <section className="relative py-24 md:py-32 lg:py-40">
@@ -605,12 +655,12 @@ function ApproachStatement() {
 
 /* ─── APPROACH (HOW) ─── */
 function Approach() {
-  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.014);
+  const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.04);
 
   return (
     <section id="approach" className="relative py-24 md:py-32 lg:py-40">
-      {/* APPROACH headline + HOW SVG */}
-      <div className="relative mb-16 md:mb-20">
+      {/* APPROACH headline + HOW SVG — parallax (slower than scroll) */}
+      <ParallaxSvg speed={-0.05} className="relative mb-16 md:mb-20">
         <div className="w-full overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -632,7 +682,7 @@ function Approach() {
             </div>
           </div>
         </div>
-      </div>
+      </ParallaxSvg>
 
       {/* 4 process blocks */}
       <div
@@ -683,6 +733,7 @@ function Approach() {
       {/* 4 image blocks — 4-column grid, cascading stagger */}
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:items-start">
+          {/* 1st — highest (mt-0) */}
           <div className="lg:mt-0 p-2">
             <ParallaxImage
               src="/images/camera.jpg"
@@ -700,7 +751,8 @@ function Approach() {
               </p>
             </div>
           </div>
-          <div className="lg:mt-20 p-2">
+          {/* 2nd — lowest (mt-60) */}
+          <div className="lg:mt-60 p-2">
             <ParallaxImage
               src="/images/mixer.jpg"
               alt="Audio mixing console"
@@ -717,7 +769,8 @@ function Approach() {
               </p>
             </div>
           </div>
-          <div className="lg:mt-40 p-2">
+          {/* 3rd — middle (mt-24) */}
+          <div className="lg:mt-24 p-2">
             <ParallaxImage
               src="/images/hero.jpg"
               alt="Studio microphone close-up"
@@ -734,7 +787,8 @@ function Approach() {
               </p>
             </div>
           </div>
-          <div className="lg:mt-60 p-2">
+          {/* 4th — lower-middle (mt-48) */}
+          <div className="lg:mt-48 p-2">
             <ParallaxImage
               src="/images/books.jpg"
               alt="Studio details"
@@ -761,8 +815,8 @@ function Approach() {
 function When() {
   return (
     <section id="pricing" className="relative py-16 md:py-24 lg:py-32">
-      {/* WHEN — large background SVG */}
-      <div className="w-full overflow-hidden mb-12 md:mb-16 lg:mb-20 px-6 md:px-12 lg:px-16">
+      {/* WHEN — large background SVG, parallax (slower than scroll) */}
+      <ParallaxSvg speed={-0.07} className="w-full overflow-hidden mb-12 md:mb-16 lg:mb-20 px-6 md:px-12 lg:px-16">
         <Image
           src="/images/when.svg"
           alt=""
@@ -771,7 +825,7 @@ function When() {
           className="w-full h-auto opacity-[0.08]"
           aria-hidden="true"
         />
-      </div>
+      </ParallaxSvg>
 
       <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-3">
