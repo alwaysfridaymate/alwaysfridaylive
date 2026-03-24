@@ -115,43 +115,59 @@ function GridLines() {
 }
 
 /* ═══════════════════════════════════════════
-   CUSTOM CURSOR  (20px, blend-difference)
+   CUSTOM CURSOR  (20px → 48px on interactive, blend-difference)
    ═══════════════════════════════════════════ */
+const CURSOR_BASE = 20;
+const CURSOR_HOVER = 48;
+
 function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let x = -100,
-      y = -100;
-    let rX = -100,
-      rY = -100;
-    let rafId: number;
-
-    const move = (e: MouseEvent) => {
-      x = e.clientX;
-      y = e.clientY;
-    };
-
-    const render = () => {
-      rX += (x - rX) * 0.15;
-      rY += (y - rY) * 0.15;
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${rX - 10}px, ${rY - 10}px)`;
-      }
-      rafId = requestAnimationFrame(render);
-    };
-
     // Hide on touch devices
     const isTouchDevice =
       typeof window !== "undefined" &&
       ("ontouchstart" in window || navigator.maxTouchPoints > 0);
     if (isTouchDevice) return;
 
+    const el = cursorRef.current;
+    if (!el) return;
+
+    let currentSize = CURSOR_BASE;
+
+    const move = (e: MouseEvent) => {
+      /* Instant position — no lerp */
+      el.style.transform = `translate(${e.clientX - currentSize / 2}px, ${e.clientY - currentSize / 2}px)`;
+    };
+
+    const setSize = (size: number) => {
+      currentSize = size;
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+    };
+
+    const onOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("a, button, [role=button]")) {
+        setSize(CURSOR_HOVER);
+      }
+    };
+
+    const onOut = (e: MouseEvent) => {
+      const target = e.relatedTarget as HTMLElement | null;
+      if (!target || !target.closest?.("a, button, [role=button]")) {
+        setSize(CURSOR_BASE);
+      }
+    };
+
     window.addEventListener("mousemove", move, { passive: true });
-    rafId = requestAnimationFrame(render);
+    document.addEventListener("mouseover", onOver, { passive: true });
+    document.addEventListener("mouseout", onOut, { passive: true });
+
     return () => {
       window.removeEventListener("mousemove", move);
-      cancelAnimationFrame(rafId);
+      document.removeEventListener("mouseover", onOver);
+      document.removeEventListener("mouseout", onOut);
     };
   }, []);
 
@@ -160,11 +176,12 @@ function CustomCursor() {
       ref={cursorRef}
       className="fixed top-0 left-0 z-[9999] pointer-events-none mix-blend-difference hidden md:block"
       style={{
-        width: 20,
-        height: 20,
+        width: CURSOR_BASE,
+        height: CURSOR_BASE,
         borderRadius: "50%",
         backgroundColor: "#ffffff",
         willChange: "transform",
+        transition: "width 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), height 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
       }}
       aria-hidden="true"
     />
