@@ -334,7 +334,7 @@ function Hero() {
   const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.05);
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d] isolate">
+    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d]">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -347,7 +347,7 @@ function Hero() {
         />
       </div>
 
-      {/* .LIVE SVG overlay — centered, full-width, blend mode exclusion, parallax (slower) */}
+      {/* .LIVE SVG overlay — centered, full-width, exclusion blend against bg photo, parallax (slower) */}
       <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -358,27 +358,30 @@ function Hero() {
         />
       </ParallaxSvg>
 
-      {/* Content — lower quarter, offset 1/3 from left */}
+      {/* Content — lower quarter, offset 1/3 from left, mix-blend-difference for SVG overlap */}
       <div
         ref={headRef}
-        className="fade-up relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20"
+        className="fade-up relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20 mix-blend-difference"
       >
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
-            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white/60 uppercase mb-6 md:mb-8 mix-blend-difference">
+            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white uppercase mb-6 md:mb-8">
               Curated Audio &amp; Video Creation
             </p>
             <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8 md:mb-12">
               Podcasts, audiobooks and voiceovers with guidance, dramaturgy
               and&nbsp;quality.
             </h1>
-            <a
-              href="#booking"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
-            >
-              Book a Session
-            </a>
+            {/* isolate the button from the parent blend mode */}
+            <div className="isolate">
+              <a
+                href="#booking"
+                className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              >
+                Book a Session
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -659,20 +662,24 @@ function Approach() {
 
   return (
     <section id="approach" className="relative py-24 md:py-32 lg:py-40">
-      {/* APPROACH headline + HOW SVG — parallax (slower than scroll) */}
-      <ParallaxSvg speed={-0.05} className="relative mb-16 md:mb-20">
-        <div className="w-full overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/how.svg"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-auto"
-            style={{ filter: "brightness(0) invert(1)" }}
-          />
-        </div>
+      {/* HOW SVG — slowest parallax + APPROACH H2 — faster parallax, layered */}
+      <div className="relative mb-16 md:mb-20">
+        {/* SVG layer — slowest (lags behind scroll) */}
+        <ParallaxSvg speed={-0.05}>
+          <div className="w-full overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/how.svg"
+              alt=""
+              aria-hidden="true"
+              className="w-full h-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
+          </div>
+        </ParallaxSvg>
+        {/* H2 layer — moves at a different (faster) speed */}
         <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-16 mix-blend-difference">
-          <div className="max-w-[1920px] mx-auto w-full">
+          <ParallaxBlock speed={0.04} className="max-w-[1920px] mx-auto w-full">
             <div className="grid grid-cols-1 lg:grid-cols-4">
               <div className="lg:col-span-3">
                 <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
@@ -680,9 +687,9 @@ function Approach() {
                 </h2>
               </div>
             </div>
-          </div>
+          </ParallaxBlock>
         </div>
-      </ParallaxSvg>
+      </div>
 
       {/* 4 process blocks */}
       <div
