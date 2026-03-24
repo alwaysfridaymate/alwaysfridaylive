@@ -215,7 +215,7 @@ function Nav() {
       <nav className="mx-auto flex items-center justify-between px-6 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
         <a
           href="#"
-          className="text-sm md:text-base font-semibold tracking-[0.2em] text-white uppercase"
+          className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase"
         >
           ALWAYSFRIDAY
         </a>
@@ -242,7 +242,7 @@ function Nav() {
         </div>
         <a
           href="#booking"
-          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
         >
           Booking
         </a>
@@ -310,7 +310,7 @@ function Hero() {
             </h1>
             <a
               href="#booking"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
             >
               Book a Session
             </a>
@@ -335,7 +335,7 @@ function About() {
       >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
               From idea to finished content. In one&nbsp;place.
             </h2>
           </div>
@@ -356,7 +356,7 @@ function About() {
             </p>
             <a
               href="#pricing"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
             >
               Pricing
             </a>
@@ -393,7 +393,7 @@ function Services() {
       >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
               Services
             </h2>
           </div>
@@ -552,7 +552,7 @@ function ApproachStatement() {
       >
         <div className="grid grid-cols-1 lg:grid-cols-4">
           <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
               We guide the creative process from concept and dramaturgy through
               recording and post&#8209;production.
             </h2>
@@ -575,7 +575,7 @@ function ApproachStatement() {
             </p>
             <a
               href="#booking"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
             >
               Book a Session
             </a>
@@ -608,7 +608,7 @@ function Approach() {
           <div className="max-w-[1920px] mx-auto w-full">
             <div className="grid grid-cols-1 lg:grid-cols-4">
               <div className="lg:col-span-3">
-                <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-bold leading-[1.15] tracking-tight text-white uppercase">
+                <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
                   Approach
                 </h2>
               </div>
@@ -786,7 +786,7 @@ function Footer() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
         {/* Left — brand */}
         <div className="lg:col-span-4">
-          <p className="text-sm font-semibold tracking-[0.2em] uppercase text-white mb-4">
+          <p className="text-sm font-normal tracking-[0.2em] uppercase text-white mb-4">
             ALWAYSFRIDAY
           </p>
           <p className="text-sm text-white/40 leading-relaxed max-w-xs">
@@ -850,7 +850,7 @@ function Footer() {
         <div className="lg:col-span-4 lg:text-right">
           <a
             href="#booking"
-            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-medium bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
           >
             Book a Session
           </a>

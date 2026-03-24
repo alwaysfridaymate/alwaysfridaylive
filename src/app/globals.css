@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* ─── Grtsk Tera font-face ─── */
+@font-face {
+  font-family: "Grtsk Tera";
+  src:
+    url("/fonts/GrtskTera-Regular.woff2") format("woff2"),
+    url("/fonts/GrtskTera-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Grtsk Tera";
+  src:
+    url("/fonts/GrtskTera-SemiBold.woff2") format("woff2"),
+    url("/fonts/GrtskTera-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --color-bg: #0d0d0d;
   --color-surface: #161616;
@@ -7,8 +27,8 @@
   --color-text-muted: #999999;
   --color-accent: #ffffff;
   --color-border: #2a2a2a;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Grtsk Tera", system-ui, -apple-system, sans-serif;
+  --font-display: "Grtsk Tera", system-ui, -apple-system, sans-serif;
 }
 
 html {
