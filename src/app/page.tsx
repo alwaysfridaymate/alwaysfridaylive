@@ -92,23 +92,41 @@ function useParallax(speed = 0.08) {
 
 /* ═══════════════════════════════════════════
    GRID LINES  (3 lines → 4 columns, md+ only)
+   Evenly spaced across full viewport width.
+   Colour cycles slowly through the spectrum.
    ═══════════════════════════════════════════ */
 function GridLines() {
+  const [hue, setHue] = useState(310); // start near the original magenta
+
+  useEffect(() => {
+    let raf: number;
+    let prev = performance.now();
+    const SPEED = 4; // degrees per second – very slow full-spectrum loop
+    const tick = (now: number) => {
+      const dt = (now - prev) / 1000;
+      prev = now;
+      setHue((h) => (h + SPEED * dt) % 360);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const color = `hsl(${hue}, 70%, 25%)`;
+
   return (
     <div
       className="hidden md:block fixed inset-0 z-[999] pointer-events-none"
       aria-hidden="true"
     >
-      <div className="mx-auto h-full max-w-[1920px] px-6 md:px-12 lg:px-16">
-        <div className="relative h-full grid grid-cols-4">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="absolute top-0 bottom-0 w-px bg-[#5E0058]"
-              style={{ left: `${(i / 4) * 100}%` }}
-            />
-          ))}
-        </div>
+      <div className="relative h-full w-full">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="absolute top-0 bottom-0 w-px"
+            style={{ left: `${(i / 4) * 100}%`, backgroundColor: color }}
+          />
+        ))}
       </div>
     </div>
   );
