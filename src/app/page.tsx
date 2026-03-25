@@ -989,6 +989,26 @@ function Price() {
 /* ─── CONTACT ─── */
 function Contact() {
   const formRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
+  const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [formData, setFormData] = useState({ name: "", contact: "", message: "" });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.contact || !formData.message) return;
+    setFormState("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error();
+      setFormState("sent");
+      setFormData({ name: "", contact: "", message: "" });
+    } catch {
+      setFormState("error");
+    }
+  };
 
   return (
     <section id="contact" data-grid="4" className="relative py-24 md:py-32 lg:py-40">
@@ -1034,60 +1054,92 @@ function Contact() {
           <div className="grid grid-cols-4">
             <div />
             <div className="col-span-2">
-              <form className="space-y-6">
+              {formState === "sent" ? (
+                <p className="text-sm tracking-[0.1em] text-white/60 uppercase py-8">
+                  Thank you. We&apos;ll get back to you soon.
+                </p>
+              ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <input
                     type="text"
                     placeholder="YOUR NAME"
-                    className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
                   />
                   <input
                     type="text"
                     placeholder="PHONE OR EMAIL"
-                    className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                    value={formData.contact}
+                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                    required
+                    className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
                   />
                 </div>
                 <textarea
                   placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  required
                   rows={5}
-                  className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+                  className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-4 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center px-10 py-3 text-sm tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+                  disabled={formState === "sending"}
+                  className="inline-flex items-center justify-center px-10 py-3 text-sm tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors disabled:opacity-50"
                 >
-                  Let Me Know
+                  {formState === "sending" ? "Sending..." : formState === "error" ? "Try Again" : "Let Me Know"}
                 </button>
               </form>
+              )}
             </div>
           </div>
         </div>
 
         {/* Mobile: stacked full width */}
         <div className="md:hidden">
-          <form className="space-y-4">
+          {formState === "sent" ? (
+            <p className="text-[16px] text-white/60 uppercase py-8">
+              Thank you. We&apos;ll get back to you soon.
+            </p>
+          ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               placeholder="YOUR NAME"
-              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
             />
             <input
               type="text"
               placeholder="PHONE OR EMAIL"
-              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+              value={formData.contact}
+              onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+              required
+              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
             />
             <textarea
               placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              required
               rows={5}
-              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-4 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center px-10 py-3 text-[16px] tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              disabled={formState === "sending"}
+              className="inline-flex items-center justify-center px-10 py-3 text-[16px] tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors disabled:opacity-50"
             >
-              Let Me Know
+              {formState === "sending" ? "Sending..." : formState === "error" ? "Try Again" : "Let Me Know"}
             </button>
           </form>
+          )}
         </div>
       </div>
 
