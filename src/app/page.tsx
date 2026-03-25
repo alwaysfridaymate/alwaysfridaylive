@@ -95,7 +95,10 @@ function useParallax(speed = 0.08) {
    ═══════════════════════════════════════════ */
 function GridLines() {
   const [hue, setHue] = useState(310);
-  const [linePositions, setLinePositions] = useState([33.333, 66.666]);
+  const [targetGrid, setTargetGrid] = useState<"3" | "4">("3");
+  const [lineOpacities, setLineOpacities] = useState([1, 1, 0]); // 3 lines, 3rd starts hidden
+  const [linePositions, setLinePositions] = useState([33.333, 66.666, 50]); // 3rd at center initially
+  const animRef = useRef<number | null>(null);
 
   useEffect(() => {
     let raf: number;
@@ -111,32 +114,68 @@ function GridLines() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  /* Watch which section is in viewport and update line positions */
+  /* Watch which section is in viewport and update target grid */
   useEffect(() => {
     const updateLines = () => {
       const sections = document.querySelectorAll("[data-grid]");
       const vh = window.innerHeight;
-      let activeGrid = "3"; // default
+      let activeGrid: "3" | "4" = "3";
 
       sections.forEach((section) => {
         const rect = section.getBoundingClientRect();
-        // Section is considered active when it covers the middle of the viewport
         if (rect.top < vh * 0.5 && rect.bottom > vh * 0.5) {
-          activeGrid = section.getAttribute("data-grid") || "3";
+          activeGrid = (section.getAttribute("data-grid") || "3") as "3" | "4";
         }
       });
 
-      if (activeGrid === "4") {
-        setLinePositions([25, 50, 75]);
-      } else {
-        setLinePositions([33.333, 66.666]);
-      }
+      setTargetGrid(activeGrid);
     };
 
     window.addEventListener("scroll", updateLines, { passive: true });
     updateLines();
     return () => window.removeEventListener("scroll", updateLines);
   }, []);
+
+  /* Animate transitions between 2-line and 3-line states */
+  useEffect(() => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+
+    const duration = 600; // ms
+    const start = performance.now();
+    const startPositions = [...linePositions];
+    const startOpacities = [...lineOpacities];
+
+    // Target states
+    const endPositions = targetGrid === "4" ? [25, 50, 75] : [33.333, 66.666, 50];
+    const endOpacities = targetGrid === "4" ? [1, 1, 1] : [1, 1, 0];
+
+    const ease = (t: number) => {
+      // cubic-bezier(0.25, 0.1, 0.25, 1) approximation
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = ease(t);
+
+      const newPositions = startPositions.map((sp, i) => sp + (endPositions[i] - sp) * eased);
+      const newOpacities = startOpacities.map((so, i) => so + (endOpacities[i] - so) * eased);
+
+      setLinePositions(newPositions);
+      setLineOpacities(newOpacities);
+
+      if (t < 1) {
+        animRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    animRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetGrid]);
 
   const color = `hsl(${hue}, 70%, 25%)`;
 
@@ -155,7 +194,7 @@ function GridLines() {
               style={{
                 left: `${pos}%`,
                 backgroundColor: color,
-                transition: "left 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)",
+                opacity: lineOpacities[i],
               }}
             />
           ))}
@@ -185,6 +224,10 @@ const CURSOR_HOVER = 48;
 
 function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef({ x: 0, y: 0 });
+  const sizeRef = useRef(CURSOR_BASE);
+  const targetSizeRef = useRef(CURSOR_BASE);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const isTouchDevice =
@@ -195,29 +238,44 @@ function CustomCursor() {
     const el = cursorRef.current;
     if (!el) return;
 
-    let currentSize = CURSOR_BASE;
+    // Animation loop for smooth size interpolation
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    const tick = () => {
+      const currentSize = sizeRef.current;
+      const targetSize = targetSizeRef.current;
+
+      if (Math.abs(currentSize - targetSize) > 0.5) {
+        sizeRef.current = lerp(currentSize, targetSize, 0.15);
+      } else {
+        sizeRef.current = targetSize;
+      }
+
+      const s = sizeRef.current;
+      el.style.width = `${s}px`;
+      el.style.height = `${s}px`;
+      el.style.transform = `translate(${posRef.current.x - s / 2}px, ${posRef.current.y - s / 2}px)`;
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
 
     const move = (e: MouseEvent) => {
-      el.style.transform = `translate(${e.clientX - currentSize / 2}px, ${e.clientY - currentSize / 2}px)`;
-    };
-
-    const setSize = (size: number) => {
-      currentSize = size;
-      el.style.width = `${size}px`;
-      el.style.height = `${size}px`;
+      posRef.current.x = e.clientX;
+      posRef.current.y = e.clientY;
     };
 
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest("a, button, [role=button], input, textarea")) {
-        setSize(CURSOR_HOVER);
+        targetSizeRef.current = CURSOR_HOVER;
       }
     };
 
     const onOut = (e: MouseEvent) => {
       const target = e.relatedTarget as HTMLElement | null;
       if (!target || !target.closest?.("a, button, [role=button], input, textarea")) {
-        setSize(CURSOR_BASE);
+        targetSizeRef.current = CURSOR_BASE;
       }
     };
 
@@ -229,6 +287,7 @@ function CustomCursor() {
       window.removeEventListener("mousemove", move);
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
+      cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
@@ -241,8 +300,7 @@ function CustomCursor() {
         height: CURSOR_BASE,
         borderRadius: "50%",
         backgroundColor: "#ffffff",
-        willChange: "transform",
-        transition: "width 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), height 0.2s cubic-bezier(0.25, 0.1, 0.25, 1)",
+        willChange: "transform, width, height",
       }}
       aria-hidden="true"
     />
@@ -469,15 +527,15 @@ function ImageCarousel({
 function Nav() {
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
-      <nav className="mx-auto flex items-center justify-between px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
+      <nav className="mx-auto flex items-center px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
         <a
           href="#"
-          className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase"
+          className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase shrink-0"
         >
           ALWAYSFRIDAY
         </a>
-        {/* Desktop nav — same style as logo */}
-        <div className="hidden md:flex items-center gap-8 lg:gap-12">
+        {/* Desktop nav — evenly distributed between logo and CTA */}
+        <div className="hidden md:flex items-center justify-evenly flex-1">
           <a href="#services" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
             Services
           </a>
@@ -490,12 +548,12 @@ function Nav() {
         </div>
         <a
           href="#contact"
-          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors shrink-0"
         >
           Booking
         </a>
         {/* Mobile menu */}
-        <button className="md:hidden text-white" aria-label="Menu">
+        <button className="md:hidden text-white ml-auto" aria-label="Menu">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M3 8h18M3 16h18" />
           </svg>
@@ -692,53 +750,51 @@ function Services() {
         ref={blocksRef}
         className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-24"
       >
-        {/* Desktop */}
+        {/* Desktop: 2x2 aligned to guide lines with 12px gaps */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-3">
+          <div
+            className="grid gap-y-12 md:gap-y-16"
+            style={{
+              gridTemplateColumns: "calc(33.333% + 12px) 1fr calc(12px) 1fr",
+            }}
+          >
+            {/* Row 1 */}
             <div />
-            <div className="col-span-2">
-              <div className="grid grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-                <div>
-                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                    Podcast Production
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                    Video Content
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                    Audiobooks &amp; Voice
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                    Creative Guidance
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="text-sm text-white/50 leading-relaxed">Concept</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Direction</li>
-                    <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
-                  </ul>
-                </div>
-              </div>
+            <div>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Podcast Production</h3>
+              <ul className="space-y-2">
+                <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
+                <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
+                <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
+              </ul>
+            </div>
+            <div />
+            <div style={{ paddingRight: "12px" }}>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Video Content</h3>
+              <ul className="space-y-2">
+                <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
+                <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
+                <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
+              </ul>
+            </div>
+            {/* Row 2 */}
+            <div />
+            <div>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Audiobooks &amp; Voice</h3>
+              <ul className="space-y-2">
+                <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
+                <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
+                <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
+              </ul>
+            </div>
+            <div />
+            <div style={{ paddingRight: "12px" }}>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Creative Guidance</h3>
+              <ul className="space-y-2">
+                <li className="text-sm text-white/50 leading-relaxed">Concept</li>
+                <li className="text-sm text-white/50 leading-relaxed">Direction</li>
+                <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -748,28 +804,34 @@ function Services() {
         </div>
       </div>
 
-      {/* Desktop: 3 staggered images */}
-      <div className="hidden md:block px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
-        <div className="grid grid-cols-3 gap-4 md:items-start">
+      {/* Desktop: 3 staggered images — aligned to guide lines with 12px gaps */}
+      <div className="hidden md:block px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+        <div className="grid md:items-start" style={{ gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
           <ParallaxBlock speed={0.04} className="mt-0">
-            <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
+            <div style={{ paddingRight: "12px" }}>
+              <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
+              </div>
             </div>
           </ParallaxBlock>
           <ParallaxBlock speed={0.09} className="mt-32">
-            <ParallaxImage src="/images/studio.jpg" alt="Recording studio" aspect="4/3" sizes="33vw" speed={0.03} />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
+              <ParallaxImage src="/images/studio.jpg" alt="Recording studio" aspect="4/3" sizes="33vw" speed={0.03} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
             </div>
           </ParallaxBlock>
           <ParallaxBlock speed={0.065} className="mt-16">
-            <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="4/3" sizes="33vw" speed={0.02} />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <div style={{ paddingLeft: "12px" }}>
+              <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="4/3" sizes="33vw" speed={0.02} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
             </div>
           </ParallaxBlock>
         </div>
@@ -864,28 +926,35 @@ function Approach() {
 
         {/* Desktop: 2x2 process blocks */}
         <div ref={blocksRef} className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+          {/* Desktop: 2x2 aligned to guide lines with 12px gaps */}
           <div className="hidden md:block">
-            <div className="grid grid-cols-3">
+            <div
+              className="grid gap-y-12 md:gap-y-16"
+              style={{
+                gridTemplateColumns: "calc(33.333% + 12px) 1fr calc(12px) 1fr",
+              }}
+            >
+              {/* Row 1 */}
               <div />
-              <div className="col-span-2">
-                <div className="grid grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-                  <div>
-                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Idea</h3>
-                    <p className="text-sm text-white/50 leading-relaxed">We help shape your idea and format.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Production</h3>
-                    <p className="text-sm text-white/50 leading-relaxed">Audio &amp; video recording in our studio.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Direction</h3>
-                    <p className="text-sm text-white/50 leading-relaxed">Dramaturgy, preparation and guidance.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Output</h3>
-                    <p className="text-sm text-white/50 leading-relaxed">Post-production and ready-to-publish content.</p>
-                  </div>
-                </div>
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Idea</h3>
+                <p className="text-sm text-white/50 leading-relaxed">We help shape your idea and format.</p>
+              </div>
+              <div />
+              <div style={{ paddingRight: "12px" }}>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Production</h3>
+                <p className="text-sm text-white/50 leading-relaxed">Audio &amp; video recording in our studio.</p>
+              </div>
+              {/* Row 2 */}
+              <div />
+              <div>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Direction</h3>
+                <p className="text-sm text-white/50 leading-relaxed">Dramaturgy, preparation and guidance.</p>
+              </div>
+              <div />
+              <div style={{ paddingRight: "12px" }}>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Output</h3>
+                <p className="text-sm text-white/50 leading-relaxed">Post-production and ready-to-publish content.</p>
               </div>
             </div>
           </div>
@@ -898,35 +967,43 @@ function Approach() {
 
       {/* Part 2: Images — 4 columns */}
       <div data-grid="4" className="py-16 md:py-24">
-        {/* Desktop: 4-column image grid */}
-        <div className="hidden md:block w-full">
+        {/* Desktop: 4-column image grid — 12px gaps from guide lines */}
+        <div className="hidden md:block w-full px-12 lg:px-16 max-w-[1920px] mx-auto">
           <div className="grid grid-cols-4 md:items-start">
-            <ParallaxBlock speed={0.035} className="lg:mt-0 px-[clamp(8px,1.2vw,20px)]">
-              <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
-              <div className="flex items-baseline justify-between mt-3 px-1">
-                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <ParallaxBlock speed={0.035} className="lg:mt-0">
+              <div style={{ paddingRight: "12px" }}>
+                <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
+                <div className="flex items-baseline justify-between mt-3 px-1">
+                  <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                </div>
               </div>
             </ParallaxBlock>
-            <ParallaxBlock speed={0.09} className="lg:mt-60 px-[clamp(8px,1.2vw,20px)]">
-              <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
-              <div className="flex items-baseline justify-between mt-3 px-1">
-                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <ParallaxBlock speed={0.09} className="lg:mt-60">
+              <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
+                <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
+                <div className="flex items-baseline justify-between mt-3 px-1">
+                  <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                </div>
               </div>
             </ParallaxBlock>
-            <ParallaxBlock speed={0.06} className="lg:mt-24 px-[clamp(8px,1.2vw,20px)]">
-              <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
-              <div className="flex items-baseline justify-between mt-3 px-1">
-                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <ParallaxBlock speed={0.06} className="lg:mt-24">
+              <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
+                <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
+                <div className="flex items-baseline justify-between mt-3 px-1">
+                  <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                </div>
               </div>
             </ParallaxBlock>
-            <ParallaxBlock speed={0.075} className="lg:mt-48 px-[clamp(8px,1.2vw,20px)]">
-              <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
-              <div className="flex items-baseline justify-between mt-3 px-1">
-                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            <ParallaxBlock speed={0.075} className="lg:mt-48">
+              <div style={{ paddingLeft: "12px" }}>
+                <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
+                <div className="flex items-baseline justify-between mt-3 px-1">
+                  <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                </div>
               </div>
             </ParallaxBlock>
           </div>
@@ -954,19 +1031,20 @@ function Price() {
   ];
 
   return (
-    <section id="pricing" data-grid="3" className="relative py-24 md:py-32 lg:py-40">
+    <section id="pricing" data-grid="4" className="relative py-24 md:py-32 lg:py-40">
       {/* PRICE SVG */}
       <SectionSvg src="/images/price.svg" speed={-0.05} />
 
       {/* Accordion */}
       <div className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-8 md:mt-12 mb-24 md:mb-32">
-        {/* Desktop: centered in cols 2-3 */}
+        {/* Desktop: 4-col grid, accordion in cols 2-3 with 12px gaps from guide lines */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-4">
             <div />
-            <div className="col-span-2">
+            <div className="col-span-2" style={{ paddingLeft: "12px", paddingRight: "12px" }}>
               <Accordion items={priceItems} />
             </div>
+            <div />
           </div>
         </div>
         {/* Mobile: full width */}
@@ -1067,7 +1145,7 @@ function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                    className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
                   />
                   <input
                     type="text"
@@ -1075,7 +1153,7 @@ function Contact() {
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                     required
-                    className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                    className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
                   />
                 </div>
                 <textarea
@@ -1084,7 +1162,7 @@ function Contact() {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
                   rows={5}
-                  className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-4 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+                  className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-4 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
                 />
                 <button
                   type="submit"
@@ -1113,7 +1191,7 @@ function Contact() {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+              className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
             />
             <input
               type="text"
@@ -1121,7 +1199,7 @@ function Contact() {
               value={formData.contact}
               onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
               required
-              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+              className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
             />
             <textarea
               placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
@@ -1129,7 +1207,7 @@ function Contact() {
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               required
               rows={5}
-              className="w-full bg-transparent border border-white/20 rounded-[40px] px-6 py-4 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+              className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-4 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
             />
             <button
               type="submit"
@@ -1144,7 +1222,7 @@ function Contact() {
       </div>
 
       {/* Footer */}
-      <footer className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-24 md:mt-32 pt-12 border-t border-white/5">
+      <footer className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-24 md:mt-32 pt-12">
         {/* Desktop: cols 2-4 (col 1 blank) */}
         <div className="hidden md:block">
           <div className="grid grid-cols-4 gap-8">
@@ -1211,19 +1289,11 @@ function Contact() {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-8">
+        {/* Bottom bar — no horizontal lines */}
+        <div className="mt-12 pb-8">
           <p className="text-xs text-white/20">
             &copy; {new Date().getFullYear()} alwaysfriday.live
           </p>
-          <a
-            href="https://www.perplexity.ai/computer"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-white/20 hover:text-white/40 transition-colors"
-          >
-            Created with Perplexity Computer
-          </a>
         </div>
       </footer>
     </section>
