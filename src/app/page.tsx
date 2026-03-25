@@ -31,7 +31,6 @@ function useFadeIn<T extends HTMLElement>(
     return () => io.disconnect();
   }, [threshold, rootMargin]);
 
-  /* Subtle text parallax — only when speed > 0, waits for fade-in to finish */
   useEffect(() => {
     if (!parallaxSpeed) return;
     const el = ref.current;
@@ -43,7 +42,6 @@ function useFadeIn<T extends HTMLElement>(
       if (!active) {
         if (!el.classList.contains("in-view")) return;
         active = true;
-        /* Let the CSS transition finish before taking over transform */
         setTimeout(() => {
           el.style.transition = "none";
         }, 950);
@@ -91,17 +89,18 @@ function useParallax(speed = 0.08) {
 }
 
 /* ═══════════════════════════════════════════
-   GRID LINES  (3 lines → 4 columns, md+ only)
-   Evenly spaced across full viewport width.
-   Colour cycles slowly through the spectrum.
+   GRID LINES — section-aware, smooth transitions
+   Desktop: 2 lines (3-col) or 3 lines (4-col) depending on section
+   Mobile: 1 line at 50%
    ═══════════════════════════════════════════ */
 function GridLines() {
-  const [hue, setHue] = useState(310); // start near the original magenta
+  const [hue, setHue] = useState(310);
+  const [linePositions, setLinePositions] = useState([33.333, 66.666]);
 
   useEffect(() => {
     let raf: number;
     let prev = performance.now();
-    const SPEED = 4; // degrees per second – very slow full-spectrum loop
+    const SPEED = 4;
     const tick = (now: number) => {
       const dt = (now - prev) / 1000;
       prev = now;
@@ -112,28 +111,74 @@ function GridLines() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  /* Watch which section is in viewport and update line positions */
+  useEffect(() => {
+    const updateLines = () => {
+      const sections = document.querySelectorAll("[data-grid]");
+      const vh = window.innerHeight;
+      let activeGrid = "3"; // default
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        // Section is considered active when it covers the middle of the viewport
+        if (rect.top < vh * 0.5 && rect.bottom > vh * 0.5) {
+          activeGrid = section.getAttribute("data-grid") || "3";
+        }
+      });
+
+      if (activeGrid === "4") {
+        setLinePositions([25, 50, 75]);
+      } else {
+        setLinePositions([33.333, 66.666]);
+      }
+    };
+
+    window.addEventListener("scroll", updateLines, { passive: true });
+    updateLines();
+    return () => window.removeEventListener("scroll", updateLines);
+  }, []);
+
   const color = `hsl(${hue}, 70%, 25%)`;
 
   return (
-    <div
-      className="hidden md:block fixed inset-0 z-[1] pointer-events-none"
-      aria-hidden="true"
-    >
-      <div className="relative h-full w-full">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="absolute top-0 bottom-0 w-px"
-            style={{ left: `${(i / 4) * 100}%`, backgroundColor: color }}
-          />
-        ))}
+    <>
+      {/* Desktop: 2 or 3 lines */}
+      <div
+        className="hidden md:block fixed inset-0 z-[1] pointer-events-none"
+        aria-hidden="true"
+      >
+        <div className="relative h-full w-full">
+          {linePositions.map((pos, i) => (
+            <div
+              key={i}
+              className="absolute top-0 bottom-0 w-px"
+              style={{
+                left: `${pos}%`,
+                backgroundColor: color,
+                transition: "left 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)",
+              }}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+      {/* Mobile: 1 line at 50% */}
+      <div
+        className="md:hidden fixed inset-0 z-[1] pointer-events-none"
+        aria-hidden="true"
+      >
+        <div className="relative h-full w-full">
+          <div
+            className="absolute top-0 bottom-0 w-px"
+            style={{ left: "50%", backgroundColor: color }}
+          />
+        </div>
+      </div>
+    </>
   );
 }
 
 /* ═══════════════════════════════════════════
-   CUSTOM CURSOR  (20px → 48px on interactive, blend-difference)
+   CUSTOM CURSOR
    ═══════════════════════════════════════════ */
 const CURSOR_BASE = 20;
 const CURSOR_HOVER = 48;
@@ -142,7 +187,6 @@ function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Hide on touch devices
     const isTouchDevice =
       typeof window !== "undefined" &&
       ("ontouchstart" in window || navigator.maxTouchPoints > 0);
@@ -154,7 +198,6 @@ function CustomCursor() {
     let currentSize = CURSOR_BASE;
 
     const move = (e: MouseEvent) => {
-      /* Instant position — no lerp */
       el.style.transform = `translate(${e.clientX - currentSize / 2}px, ${e.clientY - currentSize / 2}px)`;
     };
 
@@ -166,14 +209,14 @@ function CustomCursor() {
 
     const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest("a, button, [role=button]")) {
+      if (target.closest("a, button, [role=button], input, textarea")) {
         setSize(CURSOR_HOVER);
       }
     };
 
     const onOut = (e: MouseEvent) => {
       const target = e.relatedTarget as HTMLElement | null;
-      if (!target || !target.closest?.("a, button, [role=button]")) {
+      if (!target || !target.closest?.("a, button, [role=button], input, textarea")) {
         setSize(CURSOR_BASE);
       }
     };
@@ -244,7 +287,7 @@ function ParallaxImage({
 }
 
 /* ═══════════════════════════════════════════
-   PARALLAX BLOCK — moves entire block (image+desc)
+   PARALLAX BLOCK
    ═══════════════════════════════════════════ */
 function ParallaxBlock({
   children,
@@ -268,7 +311,7 @@ function ParallaxBlock({
 }
 
 /* ═══════════════════════════════════════════
-   SVG PARALLAX — slower than scroll for SVG elements
+   SVG PARALLAX
    ═══════════════════════════════════════════ */
 function ParallaxSvg({
   children,
@@ -291,54 +334,169 @@ function ParallaxSvg({
   );
 }
 
+/* ═══════════════════════════════════════════
+   SECTION SVG — normalized height
+   Desktop: natural size (full width). Mobile: 86px height.
+   ═══════════════════════════════════════════ */
+function SectionSvg({
+  src,
+  speed = -0.06,
+  blend = true,
+}: {
+  src: string;
+  speed?: number;
+  blend?: boolean;
+}) {
+  return (
+    <ParallaxSvg speed={speed}>
+      <div className={`w-full overflow-hidden ${blend ? "mix-blend-difference" : ""}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt=""
+          aria-hidden="true"
+          className="w-full h-auto hidden md:block"
+          style={{ filter: "brightness(0) invert(1)" }}
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt=""
+          aria-hidden="true"
+          className="md:hidden h-[86px] w-auto"
+          style={{ filter: "brightness(0) invert(1)" }}
+        />
+      </div>
+    </ParallaxSvg>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   ACCORDION COMPONENT
+   ═══════════════════════════════════════════ */
+interface AccordionItemData {
+  title: string;
+  content: React.ReactNode;
+}
+
+function Accordion({
+  items,
+  className = "",
+}: {
+  items: AccordionItemData[];
+  className?: string;
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className={className}>
+      {items.map((item, i) => {
+        const isOpen = openIndex === i;
+        return (
+          <div key={i} className="border-b border-white/10">
+            <button
+              className="w-full flex items-center justify-between py-5 md:py-6 text-left"
+              onClick={() => setOpenIndex(isOpen ? null : i)}
+            >
+              <span className="text-[16px] md:text-[18px] tracking-[0.15em] text-white uppercase font-normal">
+                {item.title}
+              </span>
+              <span
+                className="text-white/40 text-xl transition-transform duration-300"
+                style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0)" }}
+              >
+                +
+              </span>
+            </button>
+            <div
+              className="overflow-hidden transition-all duration-400"
+              style={{
+                maxHeight: isOpen ? "500px" : "0",
+                opacity: isOpen ? 1 : 0,
+              }}
+            >
+              <div className="pb-6 text-sm md:text-base text-white/50 leading-relaxed">
+                {item.content}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   IMAGE CAROUSEL — horizontal swipeable (mobile)
+   ═══════════════════════════════════════════ */
+function ImageCarousel({
+  images,
+  className = "",
+}: {
+  images: { src: string; alt: string; num: string; desc: string }[];
+  className?: string;
+}) {
+  return (
+    <div className={`overflow-x-auto scrollbar-hide ${className}`}>
+      <div className="flex gap-3" style={{ width: `${images.length * 70}vw` }}>
+        {images.map((img, i) => (
+          <div key={i} className="flex-shrink-0" style={{ width: "65vw" }}>
+            <div className="relative overflow-hidden" style={{ aspectRatio: "3/2" }}>
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className="object-cover grayscale"
+                sizes="65vw"
+              />
+            </div>
+            <div className="flex items-baseline justify-between mt-2 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
+                {img.num}
+              </p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                {img.desc}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── NAV ─── */
 function Nav() {
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
-      <nav className="mx-auto flex items-center justify-between px-6 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
+      <nav className="mx-auto flex items-center justify-between px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
         <a
           href="#"
           className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase"
         >
           ALWAYSFRIDAY
         </a>
-        {/* Desktop nav links */}
+        {/* Desktop nav — same style as logo */}
         <div className="hidden md:flex items-center gap-8 lg:gap-12">
-          <a
-            href="#services"
-            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
-          >
+          <a href="#services" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
             Services
           </a>
-          <a
-            href="#approach"
-            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
-          >
+          <a href="#approach" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
             Approach
           </a>
-          <a
-            href="#pricing"
-            className="text-xs tracking-[0.2em] text-white/70 hover:text-white transition-colors uppercase"
-          >
+          <a href="#pricing" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
             Pricing
           </a>
         </div>
         <a
-          href="#booking"
-          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+          href="#contact"
+          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors"
         >
           Booking
         </a>
-        {/* Mobile menu button */}
+        {/* Mobile menu */}
         <button className="md:hidden text-white" aria-label="Menu">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M3 8h18M3 16h18" />
           </svg>
         </button>
@@ -350,54 +508,105 @@ function Nav() {
 /* ─── HERO ─── */
 function Hero() {
   const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.05);
+  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.065);
+  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#1C1B1A]">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero.jpg"
-          alt="Studio microphone close-up"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={90}
-        />
+    <section data-grid="3" className="relative">
+      {/* Hero image — full viewport */}
+      <div className="relative min-h-screen flex flex-col overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero.jpg"
+            alt="Studio microphone close-up"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={90}
+          />
+          {/* Fade gradient at bottom */}
+          <div className="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-[#1C1B1A] via-[#1C1B1A]/60 to-transparent" />
+        </div>
+
+        {/* .LIVE SVG overlay */}
+        <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/live.svg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-auto max-h-[45vh] object-contain select-none hidden md:block"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/live.svg"
+            alt=""
+            aria-hidden="true"
+            className="md:hidden h-[86px] w-auto object-contain select-none"
+          />
+        </ParallaxSvg>
+
+        {/* Hero text content — over the gradient fade */}
+        <div
+          ref={headRef}
+          className="fade-up relative z-20 mt-auto px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20 mix-blend-difference"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3">
+            <div className="hidden lg:block" />
+            <div className="lg:col-span-2">
+              <p className="text-[10px] md:text-xs tracking-[0.3em] text-white uppercase mb-4 md:mb-6">
+                Curated Audio &amp; Video Creation
+              </p>
+              <h1 className="text-[20px] md:text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-6 md:mb-8">
+                Podcasts, audiobooks and voiceovers with guidance, dramaturgy
+                and&nbsp;quality.
+              </h1>
+              <div className="isolate">
+                <a
+                  href="#contact"
+                  className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+                >
+                  Book a Session
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* .LIVE SVG overlay — centered, full-width, exclusion blend against bg photo, parallax (slower) */}
-      <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/live.svg"
-          alt=""
-          aria-hidden="true"
-          className="w-full h-auto max-h-[45vh] object-contain select-none"
-        />
-      </ParallaxSvg>
+      {/* Below hero — H2 + body text + CTA */}
+      <div className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto py-24 md:py-32 lg:py-40">
+        <div
+          ref={h2Ref}
+          className="fade-up mb-16 md:mb-20"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3">
+            <div className="lg:col-span-3">
+              <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                From idea to finished content. In one&nbsp;place.
+              </h2>
+            </div>
+          </div>
+        </div>
 
-      {/* Content — lower quarter, offset 1/3 from left, mix-blend-difference for SVG overlap */}
-      <div
-        ref={headRef}
-        className="fade-up relative z-20 mt-auto px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20 mix-blend-difference"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <p className="text-[10px] md:text-xs tracking-[0.3em] text-white uppercase mb-6 md:mb-8">
-              Curated Audio &amp; Video Creation
-            </p>
-            <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8 md:mb-12">
-              Podcasts, audiobooks and voiceovers with guidance, dramaturgy
-              and&nbsp;quality.
-            </h1>
-            {/* isolate the button from the parent blend mode */}
-            <div className="isolate">
+        <div ref={bodyRef} className="fade-up">
+          <div className="grid grid-cols-1 lg:grid-cols-3">
+            <div className="hidden lg:block" />
+            <div className="lg:col-span-2">
+              <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-4">
+                Alwaysfriday.live is a curated studio for audio and video content
+                with long-term value.
+              </p>
+              <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
+                Our approach is based on focus, calm environment and thoughtful
+                guidance. Every project is treated with attention and care.
+              </p>
               <a
-                href="#booking"
-                className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+                href="#pricing"
+                className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
               >
-                Book a Session
+                Pricing
               </a>
             </div>
           </div>
@@ -407,238 +616,176 @@ function Hero() {
   );
 }
 
-/* ─── ABOUT ─── */
-function About() {
-  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.065);
-  const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
-
-  return (
-    <section className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline */}
-      <div
-        ref={h2Ref}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-4">
-          <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-              From idea to finished content. In one&nbsp;place.
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      {/* Body text + CTA */}
-      <div
-        ref={bodyRef}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-20 md:mb-28"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-              Our approach is based on focus, calm environment and thoughtful
-              guidance. Every project is treated with attention and care.
-            </p>
-            <a
-              href="#pricing"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
-            >
-              Pricing
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* WHAT SVG — full width, white, blend mode difference, parallax (slower) */}
-      <ParallaxSvg speed={-0.06}>
-        <div className="w-full overflow-hidden mix-blend-difference">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/what.svg"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-auto"
-            style={{ filter: "brightness(0) invert(1)" }}
-          />
-        </div>
-      </ParallaxSvg>
-    </section>
-  );
-}
-
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
   const headRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
   const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.035);
-
-  return (
-    <section id="services" className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline */}
-      <div
-        ref={headRef}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-4">
-          <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-              Services
-            </h2>
-          </div>
-        </div>
-      </div>
-
-      {/* 4 service blocks */}
-      <div
-        ref={blocksRef}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Podcast Production
-                </h3>
-                <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Curated formats
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Dramaturgy
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Recording &amp; Post-production
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Video Content
-                </h3>
-                <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Video podcasts
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Interviews
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Branded formats
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Audiobooks &amp; Voice
-                </h3>
-                <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Audiobooks
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Voiceover
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Commercials
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Creative Guidance
-                </h3>
-                <ul className="space-y-2">
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Concept
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Direction
-                  </li>
-                  <li className="text-sm text-white/50 leading-relaxed">
-                    Strategy
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Image blocks — 3 columns, staggered, full-block parallax */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 md:items-start">
-          {/* Image 01 — highest, slowest */}
-          <ParallaxBlock speed={0.04} className="md:mt-0 p-2">
-            <ParallaxImage
-              src="/images/camera.jpg"
-              alt="Sony camera setup"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.02}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                01
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Sony FX3 · GM 24mm · GM 50mm
-              </p>
-            </div>
-          </ParallaxBlock>
-          {/* Image 02 — lowest, fastest */}
-          <ParallaxBlock speed={0.09} className="md:mt-48 p-2">
-            <ParallaxImage
-              src="/images/studio.jpg"
-              alt="Recording studio setup"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.03}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                02
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
-          {/* Image 03 — mid, medium speed */}
-          <ParallaxBlock speed={0.065} className="md:mt-24 p-2">
-            <ParallaxImage
-              src="/images/mic.jpg"
-              alt="Studio microphone"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              speed={0.02}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                03
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── APPROACH STATEMENT ─── */
-function ApproachStatement() {
-  const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.07);
+  const quoteRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.07);
   const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.045);
 
+  const serviceItems: AccordionItemData[] = [
+    {
+      title: "Podcast Production",
+      content: (
+        <ul className="space-y-1">
+          <li>Curated formats</li>
+          <li>Dramaturgy</li>
+          <li>Recording &amp; Post-production</li>
+        </ul>
+      ),
+    },
+    {
+      title: "Video Content",
+      content: (
+        <ul className="space-y-1">
+          <li>Video podcasts</li>
+          <li>Interviews</li>
+          <li>Branded formats</li>
+        </ul>
+      ),
+    },
+    {
+      title: "Audiobooks & Voice",
+      content: (
+        <ul className="space-y-1">
+          <li>Audiobooks</li>
+          <li>Voiceover</li>
+          <li>Commercials</li>
+        </ul>
+      ),
+    },
+    {
+      title: "Creative Guidance",
+      content: (
+        <ul className="space-y-1">
+          <li>Concept</li>
+          <li>Direction</li>
+          <li>Strategy</li>
+        </ul>
+      ),
+    },
+  ];
+
+  const images = [
+    { src: "/images/camera.jpg", alt: "Sony camera setup", num: "01", desc: "Sony FX3 · GM 24mm · GM 50mm" },
+    { src: "/images/studio.jpg", alt: "Recording studio setup", num: "02", desc: "Description" },
+    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: "Description" },
+  ];
+
   return (
-    <section className="relative py-24 md:py-32 lg:py-40">
-      {/* Headline */}
+    <section id="services" data-grid="3" className="relative py-24 md:py-32 lg:py-40">
+      {/* WHAT SVG */}
+      <SectionSvg src="/images/what.svg" speed={-0.06} />
+
+      {/* SERVICES headline */}
       <div
-        ref={h2Ref}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+        ref={headRef}
+        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-12 md:mb-16 mt-8 md:mt-12"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-4">
+        <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          Services
+        </h2>
+      </div>
+
+      {/* Desktop: 2x2 grid of service items */}
+      <div
+        ref={blocksRef}
+        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-24"
+      >
+        {/* Desktop */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-3">
+            <div />
+            <div className="col-span-2">
+              <div className="grid grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
+                <div>
+                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                    Podcast Production
+                  </h3>
+                  <ul className="space-y-2">
+                    <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                    Video Content
+                  </h3>
+                  <ul className="space-y-2">
+                    <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                    Audiobooks &amp; Voice
+                  </h3>
+                  <ul className="space-y-2">
+                    <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
+                    Creative Guidance
+                  </h3>
+                  <ul className="space-y-2">
+                    <li className="text-sm text-white/50 leading-relaxed">Concept</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Direction</li>
+                    <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Mobile: accordion */}
+        <div className="md:hidden">
+          <Accordion items={serviceItems} />
+        </div>
+      </div>
+
+      {/* Desktop: 3 staggered images */}
+      <div className="hidden md:block px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
+        <div className="grid grid-cols-3 gap-4 md:items-start">
+          <ParallaxBlock speed={0.04} className="mt-0">
+            <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
+            </div>
+          </ParallaxBlock>
+          <ParallaxBlock speed={0.09} className="mt-32">
+            <ParallaxImage src="/images/studio.jpg" alt="Recording studio" aspect="4/3" sizes="33vw" speed={0.03} />
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            </div>
+          </ParallaxBlock>
+          <ParallaxBlock speed={0.065} className="mt-16">
+            <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="4/3" sizes="33vw" speed={0.02} />
+            <div className="flex items-baseline justify-between mt-3 px-1">
+              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+            </div>
+          </ParallaxBlock>
+        </div>
+      </div>
+
+      {/* Mobile: swipeable image carousel */}
+      <div className="md:hidden px-3 mb-16">
+        <ImageCarousel images={images} />
+      </div>
+
+      {/* Quote */}
+      <div
+        ref={quoteRef}
+        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="lg:col-span-3">
             <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
               We guide the creative process from concept and dramaturgy through
@@ -648,22 +795,22 @@ function ApproachStatement() {
         </div>
       </div>
 
-      {/* Body text + CTA */}
+      {/* Body + CTA */}
       <div
         ref={bodyRef}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
+        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
       >
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <div className="hidden lg:block" />
           <div className="lg:col-span-2">
-            <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
+            <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
               Our studio offers a rare combination of professional
               infrastructure and a unique setting — whether for a few hours or
               several focused days.
             </p>
             <a
-              href="#booking"
-              className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+              href="#contact"
+              className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
             >
               Book a Session
             </a>
@@ -678,298 +825,356 @@ function ApproachStatement() {
 function Approach() {
   const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.04);
 
+  const approachItems: AccordionItemData[] = [
+    { title: "Idea", content: "We help shape your idea and format." },
+    { title: "Production", content: "Audio & video recording in our studio." },
+    { title: "Direction", content: "Dramaturgy, preparation and guidance." },
+    { title: "Output", content: "Post-production and ready-to-publish content." },
+  ];
+
+  const images = [
+    { src: "/images/camera.jpg", alt: "Sony camera", num: "01", desc: "Description" },
+    { src: "/images/mixer.jpg", alt: "Audio mixer", num: "02", desc: "Description" },
+    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: "Description" },
+    { src: "/images/books.jpg", alt: "Studio details", num: "04", desc: "Description" },
+  ];
+
   return (
-    <section id="approach" className="relative py-24 md:py-32 lg:py-40">
-      {/* HOW SVG — slowest parallax + APPROACH H2 — faster parallax, layered */}
-      <div className="relative mb-16 md:mb-20">
-        {/* SVG layer — slowest (lags behind scroll) */}
-        <ParallaxSvg speed={-0.05}>
-          <div className="w-full overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/how.svg"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-auto"
-              style={{ filter: "brightness(0) invert(1)" }}
-            />
+    <section id="approach" className="relative">
+      {/* Part 1: Text — 3 columns */}
+      <div data-grid="3" className="py-24 md:py-32 lg:py-40">
+        {/* HOW SVG */}
+        <div className="relative mb-16 md:mb-20">
+          <ParallaxSvg speed={-0.05}>
+            <div className="w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/how.svg" alt="" aria-hidden="true" className="w-full h-auto hidden md:block" style={{ filter: "brightness(0) invert(1)" }} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/how.svg" alt="" aria-hidden="true" className="md:hidden h-[86px] w-auto" style={{ filter: "brightness(0) invert(1)" }} />
+            </div>
+          </ParallaxSvg>
+          <div className="absolute inset-0 flex items-center px-3 md:px-12 lg:px-16 mix-blend-difference">
+            <ParallaxBlock speed={0.04} className="max-w-[1920px] mx-auto w-full">
+              <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                Approach
+              </h2>
+            </ParallaxBlock>
           </div>
-        </ParallaxSvg>
-        {/* H2 layer — moves at a different (faster) speed */}
-        <div className="absolute inset-0 flex items-center px-6 md:px-12 lg:px-16 mix-blend-difference">
-          <ParallaxBlock speed={0.04} className="max-w-[1920px] mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-4">
-              <div className="lg:col-span-3">
-                <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                  Approach
-                </h2>
-              </div>
-            </div>
-          </ParallaxBlock>
         </div>
-      </div>
 
-      {/* 4 process blocks */}
-      <div
-        ref={blocksRef}
-        className="fade-up px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Idea
-                </h3>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  We help shape your idea and format.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Direction
-                </h3>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Dramaturgy, preparation and guidance.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Production
-                </h3>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Audio &amp; video recording in our studio.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">
-                  Output
-                </h3>
-                <p className="text-sm text-white/50 leading-relaxed">
-                  Post-production and ready-to-publish content.
-                </p>
+        {/* Desktop: 2x2 process blocks */}
+        <div ref={blocksRef} className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+          <div className="hidden md:block">
+            <div className="grid grid-cols-3">
+              <div />
+              <div className="col-span-2">
+                <div className="grid grid-cols-2 gap-x-12 gap-y-12 md:gap-y-16">
+                  <div>
+                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Idea</h3>
+                    <p className="text-sm text-white/50 leading-relaxed">We help shape your idea and format.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Production</h3>
+                    <p className="text-sm text-white/50 leading-relaxed">Audio &amp; video recording in our studio.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Direction</h3>
+                    <p className="text-sm text-white/50 leading-relaxed">Dramaturgy, preparation and guidance.</p>
+                  </div>
+                  <div>
+                    <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Output</h3>
+                    <p className="text-sm text-white/50 leading-relaxed">Post-production and ready-to-publish content.</p>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+          {/* Mobile: accordion */}
+          <div className="md:hidden">
+            <Accordion items={approachItems} />
           </div>
         </div>
       </div>
 
-      {/* 4 image blocks — snapped to the 4-column guide-line grid
-         Guide lines sit at 25 / 50 / 75 % of the viewport.
-         Each block is exactly 25 vw; we use a consistent inner padding
-         so the guide line falls in the centre of the visible gap. */}
-      <div className="w-full">
-        <div className="grid grid-cols-2 lg:grid-cols-4 md:items-start" style={{ padding: 0 }}>
-          {/* 1st — highest (mt-0), slowest block */}
-          <ParallaxBlock speed={0.035} className="lg:mt-0 px-[clamp(8px,1.2vw,20px)]">
-            <ParallaxImage
-              src="/images/camera.jpg"
-              alt="Sony camera"
-              aspect="3/2"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.02}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                01
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
-          {/* 2nd — lowest (mt-60), fastest block */}
-          <ParallaxBlock speed={0.09} className="lg:mt-60 px-[clamp(8px,1.2vw,20px)]">
-            <ParallaxImage
-              src="/images/mixer.jpg"
-              alt="Audio mixing console"
-              aspect="3/2"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.03}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                02
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
-          {/* 3rd — middle (mt-24), medium block */}
-          <ParallaxBlock speed={0.06} className="lg:mt-24 px-[clamp(8px,1.2vw,20px)]">
-            <ParallaxImage
-              src="/images/hero.jpg"
-              alt="Studio microphone close-up"
-              aspect="3/2"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.02}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                03
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
-          {/* 4th — lower-middle (mt-48), medium-fast block */}
-          <ParallaxBlock speed={0.075} className="lg:mt-48 px-[clamp(8px,1.2vw,20px)]">
-            <ParallaxImage
-              src="/images/books.jpg"
-              alt="Studio details"
-              aspect="3/2"
-              sizes="(max-width: 1024px) 50vw, 25vw"
-              speed={0.03}
-            />
-            <div className="flex items-baseline justify-between mt-3 px-1">
-              <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
-                04
-              </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                Description
-              </p>
-            </div>
-          </ParallaxBlock>
+      {/* Part 2: Images — 4 columns */}
+      <div data-grid="4" className="py-16 md:py-24">
+        {/* Desktop: 4-column image grid */}
+        <div className="hidden md:block w-full">
+          <div className="grid grid-cols-4 md:items-start">
+            <ParallaxBlock speed={0.035} className="lg:mt-0 px-[clamp(8px,1.2vw,20px)]">
+              <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
+            </ParallaxBlock>
+            <ParallaxBlock speed={0.09} className="lg:mt-60 px-[clamp(8px,1.2vw,20px)]">
+              <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
+            </ParallaxBlock>
+            <ParallaxBlock speed={0.06} className="lg:mt-24 px-[clamp(8px,1.2vw,20px)]">
+              <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
+            </ParallaxBlock>
+            <ParallaxBlock speed={0.075} className="lg:mt-48 px-[clamp(8px,1.2vw,20px)]">
+              <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
+              <div className="flex items-baseline justify-between mt-3 px-1">
+                <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+              </div>
+            </ParallaxBlock>
+          </div>
+        </div>
+        {/* Mobile: swipeable carousel */}
+        <div className="md:hidden px-3">
+          <ImageCarousel images={images} />
         </div>
       </div>
     </section>
   );
 }
 
-/* ─── WHEN (FINAL SECTION) ─── */
-function When() {
-  return (
-    <section id="pricing" className="relative py-16 md:py-24 lg:py-32">
-      {/* WHEN — large background SVG, parallax (slower than scroll) */}
-      <ParallaxSvg speed={-0.07} className="w-full overflow-hidden mb-12 md:mb-16 lg:mb-20 px-6 md:px-12 lg:px-16">
-        <Image
-          src="/images/when.svg"
-          alt=""
-          width={1692}
-          height={324}
-          className="w-full h-auto opacity-[0.08]"
-          aria-hidden="true"
-        />
-      </ParallaxSvg>
+/* ─── PRICE ─── */
+function Price() {
+  const quoteRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
 
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-3">
-          <ParallaxImage
+  const priceItems: AccordionItemData[] = [
+    { title: "Shooting Session", content: "Professional studio session with full equipment and guidance. Contact us for a custom quote based on your project needs." },
+    { title: "Motion Design", content: "Animated graphics and visual elements for your content. Pricing depends on complexity and duration." },
+    { title: "Sound Design", content: "Custom sound design, mixing and mastering for podcasts, audiobooks, and video content." },
+    { title: "Podcast Identity", content: "Complete podcast branding including intro/outro, jingles, and visual identity." },
+    { title: "Strategy and Dramaturgy", content: "Content strategy, narrative structure, and creative direction for your project." },
+    { title: "Production", content: "End-to-end production services from pre-production through final delivery." },
+  ];
+
+  return (
+    <section id="pricing" data-grid="3" className="relative py-24 md:py-32 lg:py-40">
+      {/* PRICE SVG */}
+      <SectionSvg src="/images/price.svg" speed={-0.05} />
+
+      {/* Accordion */}
+      <div className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-8 md:mt-12 mb-24 md:mb-32">
+        {/* Desktop: centered in cols 2-3 */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-3">
+            <div />
+            <div className="col-span-2">
+              <Accordion items={priceItems} />
+            </div>
+          </div>
+        </div>
+        {/* Mobile: full width */}
+        <div className="md:hidden">
+          <Accordion items={priceItems} />
+        </div>
+      </div>
+
+      {/* Bold statement */}
+      <div ref={quoteRef} className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+        <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          Different project requires different needs. We prefer to meet you in person
+          and look at your case individually.
+        </h2>
+      </div>
+    </section>
+  );
+}
+
+/* ─── CONTACT ─── */
+function Contact() {
+  const formRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
+
+  return (
+    <section id="contact" data-grid="4" className="relative py-24 md:py-32 lg:py-40">
+      {/* Desktop: Image in cols 3-4 */}
+      <div className="hidden md:block px-12 lg:px-16 max-w-[1920px] mx-auto mb-8">
+        <div className="grid grid-cols-4">
+          <div className="col-span-2" />
+          <div className="col-span-2">
+            <ParallaxImage
+              src="/images/studio-reflection.jpg"
+              alt="Studio reflection"
+              aspect="16/9"
+              sizes="50vw"
+              speed={0.06}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: full-width image */}
+      <div className="md:hidden mb-4">
+        <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
+          <Image
             src="/images/studio-reflection.jpg"
-            alt="Studio reflection in window"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            speed={0.06}
-          />
-          <ParallaxImage
-            src="/images/mixer.jpg"
-            alt="Audio mixing console detail"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            speed={0.1}
+            alt="Studio reflection"
+            fill
+            className="object-cover grayscale"
+            sizes="100vw"
           />
         </div>
       </div>
-    </section>
-  );
-}
 
-/* ─── FOOTER ─── */
-function Footer() {
-  return (
-    <footer
-      id="booking"
-      className="border-t border-white/5 py-16 md:py-20 lg:py-24 px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
-        {/* Left — brand */}
-        <div className="lg:col-span-4">
-          <p className="text-sm font-normal tracking-[0.2em] uppercase text-white mb-4">
-            ALWAYSFRIDAY
-          </p>
-          <p className="text-sm text-white/40 leading-relaxed max-w-xs">
-            Curated audio &amp; video creation studio based in Prague.
-          </p>
-        </div>
+      {/* TALK SVG */}
+      <SectionSvg src="/images/talk.svg" speed={-0.04} />
 
-        {/* Center — links */}
-        <div className="lg:col-span-4">
-          <div className="flex flex-col sm:flex-row gap-8">
-            <div>
-              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
-                Navigation
-              </p>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#services"
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    Services
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#approach"
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    Approach
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
-                Contact
-              </p>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="mailto:hello@alwaysfriday.live"
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
-                    hello@alwaysfriday.live
-                  </a>
-                </li>
-              </ul>
+      {/* Contact form */}
+      <div
+        ref={formRef}
+        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-12 md:mt-16"
+      >
+        {/* Desktop: centered in cols 2-3 */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-4">
+            <div />
+            <div className="col-span-2">
+              <form className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <input
+                    type="text"
+                    placeholder="YOUR NAME"
+                    className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                  />
+                  <input
+                    type="text"
+                    placeholder="PHONE OR EMAIL"
+                    className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+                  />
+                </div>
+                <textarea
+                  placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+                  rows={5}
+                  className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-sm tracking-[0.1em] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center px-10 py-3 text-sm tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+                >
+                  Let Me Know
+                </button>
+              </form>
             </div>
           </div>
         </div>
 
-        {/* Right — CTA */}
-        <div className="lg:col-span-4 lg:text-right">
+        {/* Mobile: stacked full width */}
+        <div className="md:hidden">
+          <form className="space-y-4">
+            <input
+              type="text"
+              placeholder="YOUR NAME"
+              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+            />
+            <input
+              type="text"
+              placeholder="PHONE OR EMAIL"
+              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
+            />
+            <textarea
+              placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+              rows={5}
+              className="w-full bg-transparent border border-white/20 rounded-none px-4 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors resize-none"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center px-10 py-3 text-[16px] tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+            >
+              Let Me Know
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-24 md:mt-32 pt-12 border-t border-white/5">
+        {/* Desktop: cols 2-4 (col 1 blank) */}
+        <div className="hidden md:block">
+          <div className="grid grid-cols-4 gap-8">
+            <div /> {/* col 1 blank */}
+            <div>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                Studio Řevnice
+              </p>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Co-work Meandr, Dům Sylvie,<br />
+                náměstí Krále Jiřího z Poděbrad 2,<br />
+                Řevnice
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                Studio Praha Nusle
+              </p>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Táborská 317/65,<br />
+                Praha 4
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                Fakturační údaje
+              </p>
+              <p className="text-sm text-white/50 leading-relaxed">
+                Alwaysfriday s.r.o.,<br />
+                U Ladronky 1167/30,<br />
+                Břevnov, Praha 6, 169 00
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile: stacked */}
+        <div className="md:hidden space-y-8">
+          <div>
+            <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
+              Studio Řevnice
+            </p>
+            <p className="text-sm text-white/50 leading-relaxed">
+              Co-work Meandr, Dům Sylvie,<br />
+              náměstí Krále Jiřího z Poděbrad 2, Řevnice
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
+              Studio Praha Nusle
+            </p>
+            <p className="text-sm text-white/50 leading-relaxed">
+              Táborská 317/65, Praha 4
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
+              Fakturační údaje
+            </p>
+            <p className="text-sm text-white/50 leading-relaxed">
+              Alwaysfriday s.r.o.,<br />
+              U Ladronky 1167/30, Břevnov, Praha 6, 169 00
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-8">
+          <p className="text-xs text-white/20">
+            &copy; {new Date().getFullYear()} alwaysfriday.live
+          </p>
           <a
-            href="#booking"
-            className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors"
+            href="https://www.perplexity.ai/computer"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-white/20 hover:text-white/40 transition-colors"
           >
-            Book a Session
+            Created with Perplexity Computer
           </a>
         </div>
-      </div>
-
-      <div className="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <p className="text-xs text-white/20">
-          &copy; {new Date().getFullYear()} alwaysfriday.live
-        </p>
-        <a
-          href="https://www.perplexity.ai/computer"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-white/20 hover:text-white/40 transition-colors"
-        >
-          Created with Perplexity Computer
-        </a>
-      </div>
-    </footer>
+      </footer>
+    </section>
   );
 }
 
@@ -982,13 +1187,11 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <About />
         <Services />
-        <ApproachStatement />
         <Approach />
-        <When />
+        <Price />
+        <Contact />
       </main>
-      <Footer />
     </>
   );
 }
