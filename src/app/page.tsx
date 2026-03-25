@@ -116,7 +116,7 @@ function GridLines() {
 
   return (
     <div
-      className="hidden md:block fixed inset-0 z-[999] pointer-events-none"
+      className="hidden md:block fixed inset-0 z-[1] pointer-events-none"
       aria-hidden="true"
     >
       <div className="relative h-full w-full">
@@ -352,7 +352,7 @@ function Hero() {
   const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.05);
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#0d0d0d]">
+    <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#1C1B1A]">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -755,15 +755,18 @@ function Approach() {
         </div>
       </div>
 
-      {/* 4 image blocks — 4-column grid, cascading stagger */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-4 md:items-start">
+      {/* 4 image blocks — snapped to the 4-column guide-line grid
+         Guide lines sit at 25 / 50 / 75 % of the viewport.
+         Each block is exactly 25 vw; we use a consistent inner padding
+         so the guide line falls in the centre of the visible gap. */}
+      <div className="w-full">
+        <div className="grid grid-cols-2 lg:grid-cols-4 md:items-start" style={{ padding: 0 }}>
           {/* 1st — highest (mt-0), slowest block */}
-          <ParallaxBlock speed={0.035} className="lg:mt-0 p-2">
+          <ParallaxBlock speed={0.035} className="lg:mt-0 px-[clamp(8px,1.2vw,20px)]">
             <ParallaxImage
               src="/images/camera.jpg"
               alt="Sony camera"
-              aspect="3/4"
+              aspect="3/2"
               sizes="(max-width: 1024px) 50vw, 25vw"
               speed={0.02}
             />
@@ -777,11 +780,11 @@ function Approach() {
             </div>
           </ParallaxBlock>
           {/* 2nd — lowest (mt-60), fastest block */}
-          <ParallaxBlock speed={0.09} className="lg:mt-60 p-2">
+          <ParallaxBlock speed={0.09} className="lg:mt-60 px-[clamp(8px,1.2vw,20px)]">
             <ParallaxImage
               src="/images/mixer.jpg"
               alt="Audio mixing console"
-              aspect="3/4"
+              aspect="3/2"
               sizes="(max-width: 1024px) 50vw, 25vw"
               speed={0.03}
             />
@@ -795,11 +798,11 @@ function Approach() {
             </div>
           </ParallaxBlock>
           {/* 3rd — middle (mt-24), medium block */}
-          <ParallaxBlock speed={0.06} className="lg:mt-24 p-2">
+          <ParallaxBlock speed={0.06} className="lg:mt-24 px-[clamp(8px,1.2vw,20px)]">
             <ParallaxImage
               src="/images/hero.jpg"
               alt="Studio microphone close-up"
-              aspect="3/4"
+              aspect="3/2"
               sizes="(max-width: 1024px) 50vw, 25vw"
               speed={0.02}
             />
@@ -813,11 +816,11 @@ function Approach() {
             </div>
           </ParallaxBlock>
           {/* 4th — lower-middle (mt-48), medium-fast block */}
-          <ParallaxBlock speed={0.075} className="lg:mt-48 p-2">
+          <ParallaxBlock speed={0.075} className="lg:mt-48 px-[clamp(8px,1.2vw,20px)]">
             <ParallaxImage
               src="/images/books.jpg"
               alt="Studio details"
-              aspect="3/4"
+              aspect="3/2"
               sizes="(max-width: 1024px) 50vw, 25vw"
               speed={0.03}
             />
