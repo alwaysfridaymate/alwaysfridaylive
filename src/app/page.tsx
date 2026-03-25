@@ -326,7 +326,7 @@ function ParallaxSvg({
   return (
     <div
       ref={ref}
-      className={`will-change-transform ${className}`}
+      className={`will-change-transform overflow-hidden ${className}`}
       style={{ transform: `translateY(${y}px)` }}
     >
       {children}
