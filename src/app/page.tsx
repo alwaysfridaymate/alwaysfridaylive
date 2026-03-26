@@ -748,19 +748,21 @@ function Services() {
       {/* Desktop: 2x2 grid of service items */}
       <div
         ref={blocksRef}
-        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-24"
+        className="fade-up mb-16 md:mb-24"
       >
-        {/* Desktop: 2x2 aligned to guide lines with 12px gaps */}
+        {/* Desktop: 2x2 attached to guide lines with 12px gaps.
+            Guide lines sit at 33.333% and 66.666% of viewport.
+            Grid uses the same 3-col split so content aligns to guide lines. */}
         <div className="hidden md:block">
           <div
             className="grid gap-y-12 md:gap-y-16"
             style={{
-              gridTemplateColumns: "calc(33.333% + 12px) 1fr calc(12px) 1fr",
+              gridTemplateColumns: "33.333% 33.333% 33.334%",
             }}
           >
-            {/* Row 1 */}
+            {/* Row 1: col1 empty, Podcast Production starts at guideline1+12px, Video Content starts at guideline2+12px */}
             <div />
-            <div>
+            <div style={{ paddingLeft: "12px" }}>
               <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Podcast Production</h3>
               <ul className="space-y-2">
                 <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
@@ -768,8 +770,7 @@ function Services() {
                 <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
               </ul>
             </div>
-            <div />
-            <div style={{ paddingRight: "12px" }}>
+            <div style={{ paddingLeft: "12px" }}>
               <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Video Content</h3>
               <ul className="space-y-2">
                 <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
@@ -779,7 +780,7 @@ function Services() {
             </div>
             {/* Row 2 */}
             <div />
-            <div>
+            <div style={{ paddingLeft: "12px" }}>
               <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Audiobooks &amp; Voice</h3>
               <ul className="space-y-2">
                 <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
@@ -787,8 +788,7 @@ function Services() {
                 <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
               </ul>
             </div>
-            <div />
-            <div style={{ paddingRight: "12px" }}>
+            <div style={{ paddingLeft: "12px" }}>
               <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Creative Guidance</h3>
               <ul className="space-y-2">
                 <li className="text-sm text-white/50 leading-relaxed">Concept</li>
@@ -799,14 +799,20 @@ function Services() {
           </div>
         </div>
         {/* Mobile: accordion */}
-        <div className="md:hidden">
+        <div className="md:hidden px-3">
           <Accordion items={serviceItems} />
         </div>
       </div>
 
-      {/* Desktop: 3 staggered images — aligned to guide lines with 12px gaps */}
-      <div className="hidden md:block px-12 lg:px-16 max-w-[1920px] mx-auto mb-24 md:mb-32">
-        <div className="grid md:items-start" style={{ gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
+      {/* Desktop: 3 staggered images — attached to guide lines with 12px gaps.
+          Image 1: right edge at guideline1 - 12px
+          Image 2: left at guideline1 + 12px, right at guideline2 - 12px
+          Image 3: left edge at guideline2 + 12px */}
+      <div className="hidden md:block mb-24 md:mb-32">
+        <div
+          className="grid md:items-start"
+          style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+        >
           <ParallaxBlock speed={0.04} className="mt-0">
             <div style={{ paddingRight: "12px" }}>
               <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
