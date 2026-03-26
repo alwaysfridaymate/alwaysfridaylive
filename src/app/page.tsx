@@ -608,25 +608,49 @@ function Hero() {
         {/* Hero text content — over the gradient fade */}
         <div
           ref={headRef}
-          className="fade-up relative z-20 mt-auto px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto w-full pb-12 md:pb-16 lg:pb-20 mix-blend-difference"
+          className="fade-up relative z-20 mt-auto px-3 w-full pb-12 md:pb-16 lg:pb-20 mix-blend-difference"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3">
-            <div className="hidden lg:block" />
-            <div className="lg:col-span-2">
-              <p className="text-[10px] md:text-xs tracking-[0.3em] text-white uppercase mb-4 md:mb-6">
-                Curated Audio &amp; Video Creation
-              </p>
-              <h1 className="text-[20px] md:text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-6 md:mb-8">
-                Podcasts, audiobooks and voiceovers with guidance, dramaturgy
-                and&nbsp;quality.
-              </h1>
-              <div className="isolate">
-                <a
-                  href="#contact"
-                  className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
-                >
-                  Book a Session
-                </a>
+          {/* Mobile: simple padded layout */}
+          <div className="md:hidden">
+            <p className="text-[10px] tracking-[0.3em] text-white uppercase mb-4">
+              Curated Audio &amp; Video Creation
+            </p>
+            <h1 className="text-[20px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-6">
+              Podcasts, audiobooks and voiceovers with guidance, dramaturgy
+              and&nbsp;quality.
+            </h1>
+            <div className="isolate">
+              <a
+                href="#contact"
+                className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+              >
+                Book a Session
+              </a>
+            </div>
+          </div>
+          {/* Desktop: full-width 3-col grid aligned to guide lines */}
+          <div className="hidden md:block">
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+            >
+              <div />
+              <div className="col-span-2" style={{ paddingLeft: "12px" }}>
+                <p className="text-xs tracking-[0.3em] text-white uppercase mb-6">
+                  Curated Audio &amp; Video Creation
+                </p>
+                <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8">
+                  Podcasts, audiobooks and voiceovers with guidance, dramaturgy
+                  and&nbsp;quality.
+                </h1>
+                <div className="isolate">
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+                  >
+                    Book a Session
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -634,38 +658,73 @@ function Hero() {
       </div>
 
       {/* Below hero — H2 + body text + CTA */}
-      <div className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto py-24 md:py-32 lg:py-40">
+      <div className="px-3 py-24 md:py-32 lg:py-40">
         <div
           ref={h2Ref}
           className="fade-up mb-16 md:mb-20"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3">
-            <div className="lg:col-span-3">
-              <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                From idea to finished content. In one&nbsp;place.
-              </h2>
+          {/* Mobile H2 */}
+          <div className="md:hidden">
+            <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+              From idea to finished content. In one&nbsp;place.
+            </h2>
+          </div>
+          {/* Desktop H2 — full-width 3-col grid, headline spans all */}
+          <div className="hidden md:block">
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+            >
+              <div className="col-span-3" style={{ paddingLeft: "12px" }}>
+                <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                  From idea to finished content. In one&nbsp;place.
+                </h2>
+              </div>
             </div>
           </div>
         </div>
 
         <div ref={bodyRef} className="fade-up">
-          <div className="grid grid-cols-1 lg:grid-cols-3">
-            <div className="hidden lg:block" />
-            <div className="lg:col-span-2">
-              <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-4">
-                Alwaysfriday.live is a curated studio for audio and video content
-                with long-term value.
-              </p>
-              <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-                Our approach is based on focus, calm environment and thoughtful
-                guidance. Every project is treated with attention and care.
-              </p>
-              <a
-                href="#pricing"
-                className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
-              >
-                Pricing
-              </a>
+          {/* Mobile body */}
+          <div className="md:hidden">
+            <p className="text-[16px] text-white/60 leading-relaxed mb-4">
+              Alwaysfriday.live is a curated studio for audio and video content
+              with long-term value.
+            </p>
+            <p className="text-[16px] text-white/60 leading-relaxed mb-10">
+              Our approach is based on focus, calm environment and thoughtful
+              guidance. Every project is treated with attention and care.
+            </p>
+            <a
+              href="#pricing"
+              className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+            >
+              Pricing
+            </a>
+          </div>
+          {/* Desktop body — full-width 3-col grid, body in col2-3 */}
+          <div className="hidden md:block">
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+            >
+              <div />
+              <div className="col-span-2" style={{ paddingLeft: "12px" }}>
+                <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-4">
+                  Alwaysfriday.live is a curated studio for audio and video content
+                  with long-term value.
+                </p>
+                <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-14">
+                  Our approach is based on focus, calm environment and thoughtful
+                  guidance. Every project is treated with attention and care.
+                </p>
+                <a
+                  href="#pricing"
+                  className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+                >
+                  Pricing
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -738,11 +797,27 @@ function Services() {
       {/* SERVICES headline */}
       <div
         ref={headRef}
-        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-12 md:mb-16 mt-8 md:mt-12"
+        className="fade-up px-3 mb-12 md:mb-16 mt-8 md:mt-12"
       >
-        <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-          Services
-        </h2>
+        {/* Mobile */}
+        <div className="md:hidden">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+            Services
+          </h2>
+        </div>
+        {/* Desktop: full-width 3-col grid */}
+        <div className="hidden md:block">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+          >
+            <div className="col-span-3" style={{ paddingLeft: "12px" }}>
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                Services
+              </h2>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Desktop: 2x2 grid of service items */}
@@ -851,14 +926,27 @@ function Services() {
       {/* Quote */}
       <div
         ref={quoteRef}
-        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mb-16 md:mb-20"
+        className="fade-up px-3 mb-16 md:mb-20"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="lg:col-span-3">
-            <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-              We guide the creative process from concept and dramaturgy through
-              recording and post&#8209;production.
-            </h2>
+        {/* Mobile */}
+        <div className="md:hidden">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+            We guide the creative process from concept and dramaturgy through
+            recording and post&#8209;production.
+          </h2>
+        </div>
+        {/* Desktop: full-width 3-col grid */}
+        <div className="hidden md:block">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+          >
+            <div className="col-span-3" style={{ paddingLeft: "12px" }}>
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                We guide the creative process from concept and dramaturgy through
+                recording and post&#8209;production.
+              </h2>
+            </div>
           </div>
         </div>
       </div>
@@ -866,22 +954,42 @@ function Services() {
       {/* Body + CTA */}
       <div
         ref={bodyRef}
-        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto"
+        className="fade-up px-3"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3">
-          <div className="hidden lg:block" />
-          <div className="lg:col-span-2">
-            <p className="text-[16px] md:text-base text-white/60 leading-relaxed max-w-2xl mb-10 md:mb-14">
-              Our studio offers a rare combination of professional
-              infrastructure and a unique setting — whether for a few hours or
-              several focused days.
-            </p>
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center px-8 py-3 text-[16px] md:text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
-            >
-              Book a Session
-            </a>
+        {/* Mobile */}
+        <div className="md:hidden">
+          <p className="text-[16px] text-white/60 leading-relaxed mb-10">
+            Our studio offers a rare combination of professional
+            infrastructure and a unique setting — whether for a few hours or
+            several focused days.
+          </p>
+          <a
+            href="#contact"
+            className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+          >
+            Book a Session
+          </a>
+        </div>
+        {/* Desktop: full-width 3-col grid */}
+        <div className="hidden md:block">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+          >
+            <div />
+            <div className="col-span-2" style={{ paddingLeft: "12px" }}>
+              <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-14">
+                Our studio offers a rare combination of professional
+                infrastructure and a unique setting — whether for a few hours or
+                several focused days.
+              </p>
+              <a
+                href="#contact"
+                className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+              >
+                Book a Session
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -921,44 +1029,58 @@ function Approach() {
               <img src="/images/how.svg" alt="" aria-hidden="true" className="md:hidden h-[86px] w-auto" style={{ filter: "brightness(0) invert(1)" }} />
             </div>
           </ParallaxSvg>
-          <div className="absolute inset-0 flex items-center px-3 md:px-12 lg:px-16 mix-blend-difference">
-            <ParallaxBlock speed={0.04} className="max-w-[1920px] mx-auto w-full">
-              <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                Approach
-              </h2>
+          <div className="absolute inset-0 flex items-center px-3 mix-blend-difference">
+            <ParallaxBlock speed={0.04} className="w-full">
+              {/* Mobile */}
+              <div className="md:hidden">
+                <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                  Approach
+                </h2>
+              </div>
+              {/* Desktop: full-width 3-col grid */}
+              <div className="hidden md:block">
+                <div
+                  className="grid"
+                  style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
+                >
+                  <div className="col-span-3" style={{ paddingLeft: "12px" }}>
+                    <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                      Approach
+                    </h2>
+                  </div>
+                </div>
+              </div>
             </ParallaxBlock>
           </div>
         </div>
 
         {/* Desktop: 2x2 process blocks */}
-        <div ref={blocksRef} className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
+        <div ref={blocksRef} className="fade-up px-3">
           {/* Desktop: 2x2 aligned to guide lines with 12px gaps */}
           <div className="hidden md:block">
             <div
               className="grid gap-y-12 md:gap-y-16"
               style={{
-                gridTemplateColumns: "calc(33.333% + 12px) 1fr calc(12px) 1fr",
+                gridTemplateColumns: "33.333% 33.333% 33.334%",
               }}
             >
-              {/* Row 1 */}
+              {/* Row 1: col1 empty, Idea starts at guideline1+12px, Production starts at guideline2+12px */}
               <div />
-              <div>
+              <div style={{ paddingLeft: "12px" }}>
                 <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Idea</h3>
                 <p className="text-sm text-white/50 leading-relaxed">We help shape your idea and format.</p>
               </div>
-              <div />
-              <div style={{ paddingRight: "12px" }}>
+              <div style={{ paddingLeft: "12px" }}>
                 <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Production</h3>
                 <p className="text-sm text-white/50 leading-relaxed">Audio &amp; video recording in our studio.</p>
               </div>
               {/* Row 2 */}
               <div />
-              <div>
+              <div style={{ paddingLeft: "12px" }}>
                 <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Direction</h3>
                 <p className="text-sm text-white/50 leading-relaxed">Dramaturgy, preparation and guidance.</p>
               </div>
-              <div />
-              <div style={{ paddingRight: "12px" }}>
+              <div style={{ paddingLeft: "12px" }}>
                 <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Output</h3>
                 <p className="text-sm text-white/50 leading-relaxed">Post-production and ready-to-publish content.</p>
               </div>
@@ -974,8 +1096,11 @@ function Approach() {
       {/* Part 2: Images — 4 columns */}
       <div data-grid="4" className="py-16 md:py-24">
         {/* Desktop: 4-column image grid — 12px gaps from guide lines */}
-        <div className="hidden md:block w-full px-12 lg:px-16 max-w-[1920px] mx-auto">
-          <div className="grid grid-cols-4 md:items-start">
+        <div className="hidden md:block w-full">
+          <div
+            className="grid md:items-start"
+            style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+          >
             <ParallaxBlock speed={0.035} className="lg:mt-0">
               <div style={{ paddingRight: "12px" }}>
                 <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
@@ -1042,10 +1167,13 @@ function Price() {
       <SectionSvg src="/images/price.svg" speed={-0.05} />
 
       {/* Accordion */}
-      <div className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-8 md:mt-12 mb-24 md:mb-32">
+      <div className="px-3 mt-8 md:mt-12 mb-24 md:mb-32">
         {/* Desktop: 4-col grid, accordion in cols 2-3 with 12px gaps from guide lines */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-4">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+          >
             <div />
             <div className="col-span-2" style={{ paddingLeft: "12px", paddingRight: "12px" }}>
               <Accordion items={priceItems} />
@@ -1060,11 +1188,28 @@ function Price() {
       </div>
 
       {/* Bold statement */}
-      <div ref={quoteRef} className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto">
-        <h2 className="text-[32px] md:text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-          Different project requires different needs. We prefer to meet you in person
-          and look at your case individually.
-        </h2>
+      <div ref={quoteRef} className="fade-up px-3">
+        {/* Mobile */}
+        <div className="md:hidden">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+            Different project requires different needs. We prefer to meet you in person
+            and look at your case individually.
+          </h2>
+        </div>
+        {/* Desktop: full-width 4-col grid */}
+        <div className="hidden md:block">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+          >
+            <div className="col-span-4" style={{ paddingLeft: "12px" }}>
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                Different project requires different needs. We prefer to meet you in person
+                and look at your case individually.
+              </h2>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -1097,10 +1242,13 @@ function Contact() {
   return (
     <section id="contact" data-grid="4" className="relative py-24 md:py-32 lg:py-40">
       {/* Desktop: Image in cols 3-4 */}
-      <div className="hidden md:block px-12 lg:px-16 max-w-[1920px] mx-auto mb-8">
-        <div className="grid grid-cols-4">
+      <div className="hidden md:block mb-8">
+        <div
+          className="grid"
+          style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+        >
           <div className="col-span-2" />
-          <div className="col-span-2">
+          <div className="col-span-2" style={{ paddingLeft: "12px" }}>
             <ParallaxImage
               src="/images/studio-reflection.jpg"
               alt="Studio reflection"
@@ -1131,13 +1279,16 @@ function Contact() {
       {/* Contact form */}
       <div
         ref={formRef}
-        className="fade-up px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-12 md:mt-16"
+        className="fade-up px-3 mt-12 md:mt-16"
       >
         {/* Desktop: centered in cols 2-3 */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-4">
+          <div
+            className="grid"
+            style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+          >
             <div />
-            <div className="col-span-2">
+            <div className="col-span-2" style={{ paddingLeft: "12px", paddingRight: "12px" }}>
               {formState === "sent" ? (
                 <p className="text-sm tracking-[0.1em] text-white/60 uppercase py-8">
                   Thank you. We&apos;ll get back to you soon.
@@ -1228,12 +1379,15 @@ function Contact() {
       </div>
 
       {/* Footer */}
-      <footer className="px-3 md:px-12 lg:px-16 max-w-[1920px] mx-auto mt-24 md:mt-32 pt-12">
+      <footer className="px-3 mt-24 md:mt-32 pt-12">
         {/* Desktop: cols 2-4 (col 1 blank) */}
         <div className="hidden md:block">
-          <div className="grid grid-cols-4 gap-8">
+          <div
+            className="grid gap-8"
+            style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
+          >
             <div /> {/* col 1 blank */}
-            <div>
+            <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
                 Studio Řevnice
               </p>
@@ -1243,7 +1397,7 @@ function Contact() {
                 Řevnice
               </p>
             </div>
-            <div>
+            <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
                 Studio Praha Nusle
               </p>
@@ -1252,7 +1406,7 @@ function Contact() {
                 Praha 4
               </p>
             </div>
-            <div>
+            <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
                 Fakturační údaje
               </p>
