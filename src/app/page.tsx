@@ -1380,13 +1380,17 @@ function Contact() {
 
       {/* Footer */}
       <footer className="px-3 mt-24 md:mt-32 pt-12">
-        {/* Desktop: cols 2-4 (col 1 blank) */}
+        {/* Desktop: all 4 cols used */}
         <div className="hidden md:block">
           <div
-            className="grid gap-8"
+            className="grid"
             style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
           >
-            <div /> {/* col 1 blank */}
+            <div style={{ paddingLeft: "12px" }}>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                &copy; {new Date().getFullYear()} alwaysfriday.live
+              </p>
+            </div>
             <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
                 Studio Řevnice
@@ -1417,6 +1421,7 @@ function Contact() {
               </p>
             </div>
           </div>
+          <div className="pb-8" />
         </div>
 
         {/* Mobile: stacked */}
@@ -1447,13 +1452,11 @@ function Contact() {
               U Ladronky 1167/30, Břevnov, Praha 6, 169 00
             </p>
           </div>
-        </div>
-
-        {/* Bottom bar — no horizontal lines */}
-        <div className="mt-12 pb-8">
-          <p className="text-xs text-white/20">
-            &copy; {new Date().getFullYear()} alwaysfriday.live
-          </p>
+          <div className="mt-12 pb-8">
+            <p className="text-xs text-white/20">
+              &copy; {new Date().getFullYear()} alwaysfriday.live
+            </p>
+          </div>
         </div>
       </footer>
     </section>
