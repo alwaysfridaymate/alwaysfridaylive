@@ -1293,8 +1293,8 @@ function Model() {
       <p>{t("howSubscriptionIntro")}</p>
       <p>{t("howSubscriptionProblem")}</p>
       <p className="text-white">{t("howSubscriptionDifferent")}</p>
-      <p>{t("howSubscriptionSystem")}</p>
-      <p>{t("howSubscriptionExamples")}</p>
+      {t("howSubscriptionSystem") && <p>{t("howSubscriptionSystem")}</p>}
+      {t("howSubscriptionExamples") && <p>{t("howSubscriptionExamples")}</p>}
       <p>{t("howSubscriptionConclusion")}</p>
     </div>
   );
