@@ -471,7 +471,7 @@ function Accordion({
             <div
               className="overflow-hidden transition-all duration-400"
               style={{
-                maxHeight: isOpen ? "500px" : "0",
+                maxHeight: isOpen ? "2000px" : "0",
                 opacity: isOpen ? 1 : 0,
               }}
             >
@@ -1147,29 +1147,191 @@ function Approach() {
   );
 }
 
-/* ─── PRICE ─── */
-function Price() {
-  const t = useTranslations("price");
+/* ─── MODEL ─── */
+function Model() {
+  const t = useTranslations("model");
 
   const quoteRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
 
-  const priceItems: AccordionItemData[] = [
-    { title: t("shootingSession"), content: t("shootingSessionDesc") },
-    { title: t("motionDesign"), content: t("motionDesignDesc") },
-    { title: t("soundDesign"), content: t("soundDesignDesc") },
-    { title: t("podcastIdentity"), content: t("podcastIdentityDesc") },
-    { title: t("strategyDramaturgy"), content: t("strategyDramaturgyDesc") },
-    { title: t("productionTitle"), content: t("productionDesc") },
+  /* ── Session card JSX (used inside 4th accordion) ── */
+  const sessionCard = (
+    <div className="space-y-8">
+      {/* Session header */}
+      <div>
+        <h4 className="text-[22px] md:text-[26px] text-white font-normal tracking-tight">
+          {t("sessionTitle")}
+        </h4>
+        <p className="text-sm text-white/50 mt-1">{t("sessionDesc")}</p>
+      </div>
+
+      {/* LIVE block */}
+      <div>
+        <p className="text-[10px] tracking-[0.2em] text-white/30 uppercase mb-4">
+          {t("sessionLiveLabel")}
+        </p>
+        <ul className="space-y-4 text-sm text-white/70">
+          <li>
+            <span className="text-white font-medium">{t("sessionLiveItem1Bold")}</span>{" "}
+            <span className="text-white/40">{t("sessionLiveItem1Detail")}</span>
+            <br />
+            <span className="text-white/40">{t("sessionLiveItem1Sub")}</span>
+          </li>
+          <li>
+            <span className="text-white font-medium">{t("sessionLiveItem2Bold")}</span>
+            <br />
+            <span className="text-white/40">{t("sessionLiveItem2Sub")}</span>
+          </li>
+          <li>
+            <span className="text-white font-medium">{t("sessionLiveItem3Bold")}</span>{" "}
+            <span className="text-white/40">{t("sessionLiveItem3Detail")}</span>
+          </li>
+          <li>
+            <span className="text-white font-medium">{t("sessionLiveItem4Bold")}</span>
+            <br />
+            {t("sessionLiveItem4Sub").split("\n").map((line, i, arr) => (
+              <span key={i} className="text-white/40">
+                {line}{i < arr.length - 1 && <br />}
+              </span>
+            ))}
+          </li>
+        </ul>
+      </div>
+
+      {/* STUDIO block */}
+      <div className="border-t border-white/10 pt-6">
+        <p className="text-[10px] tracking-[0.2em] text-white/30 uppercase mb-4">
+          {t("sessionStudioLabel")}
+        </p>
+        <ul className="space-y-1 text-sm">
+          <li>
+            <span className="text-white font-medium">{t("sessionStudioItem1Bold")}</span>
+            <br />
+            <span className="text-white/40">{t("sessionStudioItem1Sub")}</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* SLA block */}
+      <div className="border-t border-white/10 pt-6">
+        <p className="text-[10px] tracking-[0.2em] text-white/30 uppercase mb-4">
+          {t("sessionSlaLabel")}
+        </p>
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="text-white font-medium">{t("sessionSlaDelivery")}</p>
+            <p className="text-white/40">{t("sessionSlaDeliveryVal")}</p>
+          </div>
+          <div>
+            <p className="text-white font-medium">{t("sessionSlaRevisions")}</p>
+            <p className="text-white/40">{t("sessionSlaRevisionsVal")}</p>
+          </div>
+          <div>
+            <p className="text-white font-medium">{t("sessionSlaOutputs")}</p>
+            <p className="text-white/40">{t("sessionSlaOutputsVal")}</p>
+          </div>
+          <div>
+            <p className="text-white font-medium">{t("sessionSlaHandoff")}</p>
+            <p className="text-white/40">{t("sessionSlaHandoffVal")}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Price */}
+      <div className="border-t border-white/10 pt-6">
+        <p className="text-[32px] md:text-[36px] text-white font-light tracking-tight leading-none">
+          {t("sessionPrice")}{" "}
+          <span className="text-sm text-white/40 font-normal">{t("sessionPricePer")}</span>
+        </p>
+        <p className="text-sm text-white/40 mt-2">{t("sessionPriceCommitment")}</p>
+      </div>
+    </div>
+  );
+
+  /* ── "What is a session" content ── */
+  const whatIsSessionContent = (
+    <div className="space-y-4">
+      <p>{t("whatIsSessionContent")}</p>
+      <p>{t("whatIsSessionCombine")}</p>
+      <ul className="space-y-1 pl-0">
+        {["whatIsSessionItem1", "whatIsSessionItem2", "whatIsSessionItem3", "whatIsSessionItem4", "whatIsSessionItem5"].map((key) => (
+          <li key={key} className="flex gap-2">
+            <span className="text-white/30">&mdash;</span>
+            <span>{t(key)}</span>
+          </li>
+        ))}
+      </ul>
+      <p>{t("whatIsSessionResult")}</p>
+      <p>{t("whatIsSessionGuarantee")}</p>
+    </div>
+  );
+
+  /* ── "Why subscription" content ── */
+  const whySubscriptionContent = (
+    <div className="space-y-4">
+      <p>{t("whySubscriptionIntro")}</p>
+      {(["01", "02", "03", "04"] as const).map((num, i) => {
+        const keys = [
+          ["whyConsistency", "whyConsistencyDesc"],
+          ["whyDepth", "whyDepthDesc"],
+          ["whyFlexibility", "whyFlexibilityDesc"],
+          ["whyClarity", "whyClarityDesc"],
+        ] as const;
+        return (
+          <p key={i}>
+            <span className="text-white/30">{num}</span>{" "}
+            <span className="text-white">{t(keys[i][0])}</span>{" "}
+            <span>&mdash; {t(keys[i][1])}</span>
+          </p>
+        );
+      })}
+    </div>
+  );
+
+  /* ── "How subscription works" content ── */
+  const howSubscriptionContent = (
+    <div className="space-y-4">
+      <p>{t("howSubscriptionIntro")}</p>
+      <p>{t("howSubscriptionProblem")}</p>
+      <p className="text-white">{t("howSubscriptionDifferent")}</p>
+      <p>{t("howSubscriptionSystem")}</p>
+      <p>{t("howSubscriptionExamples")}</p>
+      <p>{t("howSubscriptionConclusion")}</p>
+    </div>
+  );
+
+  const modelItems: AccordionItemData[] = [
+    { title: t("whatIsSession"), content: whatIsSessionContent },
+    { title: t("howSubscription"), content: howSubscriptionContent },
+    { title: t("whySubscription"), content: whySubscriptionContent },
+    { title: t("sessionExample"), content: sessionCard },
   ];
 
   return (
     <section id="pricing" data-grid="4" className="relative py-24 md:py-32 lg:py-40">
-      {/* PRICE SVG */}
-      <SectionSvg src="/images/price.svg" speed={-0.05} />
+      {/* MODEL SVG */}
+      <SectionSvg src="/images/model.svg" speed={-0.05} />
+
+      {/* Creative Subscription subtitle */}
+      <div className="px-3 mt-4 md:mt-8 mb-16 md:mb-24">
+        <div className="md:hidden">
+          <h2 className="text-[28px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+            {t("subtitle")}
+          </h2>
+        </div>
+        <div className="hidden md:block">
+          <div className="grid" style={{ gridTemplateColumns: "25% 25% 25% 25%" }}>
+            <div className="col-span-4" style={{ paddingLeft: "12px" }}>
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                {t("subtitle")}
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Accordion */}
-      <div className="px-3 mt-8 md:mt-12 mb-24 md:mb-32">
-        {/* Desktop: 4-col grid, accordion in cols 2-3 with 12px gaps from guide lines */}
+      <div className="px-3 mb-24 md:mb-32">
+        {/* Desktop: 4-col grid, accordion in cols 2-3 */}
         <div className="hidden md:block">
           <div
             className="grid"
@@ -1177,14 +1339,14 @@ function Price() {
           >
             <div />
             <div className="col-span-2" style={{ paddingLeft: "12px", paddingRight: "12px" }}>
-              <Accordion items={priceItems} />
+              <Accordion items={modelItems} />
             </div>
             <div />
           </div>
         </div>
         {/* Mobile: full width */}
         <div className="md:hidden">
-          <Accordion items={priceItems} />
+          <Accordion items={modelItems} />
         </div>
       </div>
 
@@ -1487,7 +1649,7 @@ export default function Home() {
         <Hero />
         <Services />
         <Approach />
-        <Price />
+        <Model />
         <Contact />
       </main>
     </>
