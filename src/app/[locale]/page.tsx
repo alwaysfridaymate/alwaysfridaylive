@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 /* ═══════════════════════════════════════════
    HOOKS
@@ -525,6 +527,8 @@ function ImageCarousel({
 
 /* ─── NAV ─── */
 function Nav() {
+  const t = useTranslations("nav");
+
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
       <nav className="mx-auto flex items-center px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
@@ -532,25 +536,25 @@ function Nav() {
           href="#"
           className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase shrink-0"
         >
-          ALWAYSFRIDAY
+          {t("brand")}
         </a>
         {/* Desktop nav — evenly distributed between logo and CTA */}
         <div className="hidden md:flex items-center justify-evenly flex-1">
           <a href="#services" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            Services
+            {t("services")}
           </a>
           <a href="#approach" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            Approach
+            {t("approach")}
           </a>
           <a href="#pricing" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            Pricing
+            {t("pricing")}
           </a>
         </div>
         <a
           href="#contact"
           className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors shrink-0"
         >
-          Booking
+          {t("booking")}
         </a>
         {/* Mobile menu */}
         <button className="md:hidden text-white ml-auto" aria-label="Menu">
@@ -565,6 +569,9 @@ function Nav() {
 
 /* ─── HERO ─── */
 function Hero() {
+  const t = useTranslations("hero");
+  const tAbout = useTranslations("about");
+
   const headRef = useFadeIn<HTMLDivElement>(0.2, "0px 0px -40px 0px", 0.05);
   const h2Ref = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.065);
   const bodyRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
@@ -613,18 +620,17 @@ function Hero() {
           {/* Mobile: simple padded layout */}
           <div className="md:hidden">
             <p className="text-[10px] tracking-[0.3em] text-white uppercase mb-4">
-              Curated Audio &amp; Video Creation
+              {t("tagline")}
             </p>
             <h1 className="text-[20px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-6">
-              Podcasts, audiobooks and voiceovers with guidance, dramaturgy
-              and&nbsp;quality.
+              {t("headline")}
             </h1>
             <div className="isolate">
               <a
                 href="#contact"
                 className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
               >
-                Book a Session
+                {t("cta")}
               </a>
             </div>
           </div>
@@ -637,18 +643,17 @@ function Hero() {
               <div />
               <div className="col-span-2" style={{ paddingLeft: "12px" }}>
                 <p className="text-xs tracking-[0.3em] text-white uppercase mb-6">
-                  Curated Audio &amp; Video Creation
+                  {t("tagline")}
                 </p>
                 <h1 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase max-w-3xl mb-8">
-                  Podcasts, audiobooks and voiceovers with guidance, dramaturgy
-                  and&nbsp;quality.
+                  {t("headline")}
                 </h1>
                 <div className="isolate">
                   <a
                     href="#contact"
                     className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
                   >
-                    Book a Session
+                    {t("cta")}
                   </a>
                 </div>
               </div>
@@ -666,7 +671,7 @@ function Hero() {
           {/* Mobile H2 */}
           <div className="md:hidden">
             <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-              From idea to finished content. In one&nbsp;place.
+              {tAbout("headline")}
             </h2>
           </div>
           {/* Desktop H2 — full-width 3-col grid, headline spans all */}
@@ -677,7 +682,7 @@ function Hero() {
             >
               <div className="col-span-3" style={{ paddingLeft: "12px" }}>
                 <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                  From idea to finished content. In one&nbsp;place.
+                  {tAbout("headline")}
                 </h2>
               </div>
             </div>
@@ -688,18 +693,16 @@ function Hero() {
           {/* Mobile body */}
           <div className="md:hidden">
             <p className="text-[16px] text-white/60 leading-relaxed mb-4">
-              Alwaysfriday.live is a curated studio for audio and video content
-              with long-term value.
+              {tAbout("body1")}
             </p>
             <p className="text-[16px] text-white/60 leading-relaxed mb-10">
-              Our approach is based on focus, calm environment and thoughtful
-              guidance. Every project is treated with attention and care.
+              {tAbout("body2")}
             </p>
             <a
               href="#pricing"
               className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
             >
-              Pricing
+              {tAbout("ctaPricing")}
             </a>
           </div>
           {/* Desktop body — full-width 3-col grid, body in col2-3 */}
@@ -711,18 +714,16 @@ function Hero() {
               <div />
               <div className="col-span-2" style={{ paddingLeft: "12px" }}>
                 <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-4">
-                  Alwaysfriday.live is a curated studio for audio and video content
-                  with long-term value.
+                  {tAbout("body1")}
                 </p>
                 <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-14">
-                  Our approach is based on focus, calm environment and thoughtful
-                  guidance. Every project is treated with attention and care.
+                  {tAbout("body2")}
                 </p>
                 <a
                   href="#pricing"
                   className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
                 >
-                  Pricing
+                  {tAbout("ctaPricing")}
                 </a>
               </div>
             </div>
@@ -735,6 +736,8 @@ function Hero() {
 
 /* ─── SERVICES (WHAT) ─── */
 function Services() {
+  const t = useTranslations("services");
+
   const headRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
   const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.035);
   const quoteRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.07);
@@ -742,51 +745,51 @@ function Services() {
 
   const serviceItems: AccordionItemData[] = [
     {
-      title: "Podcast Production",
+      title: t("podcastProduction"),
       content: (
         <ul className="space-y-1">
-          <li>Curated formats</li>
-          <li>Dramaturgy</li>
-          <li>Recording &amp; Post-production</li>
+          <li>{t("curatedFormats")}</li>
+          <li>{t("dramaturgy")}</li>
+          <li>{t("recordingPost")}</li>
         </ul>
       ),
     },
     {
-      title: "Video Content",
+      title: t("videoContent"),
       content: (
         <ul className="space-y-1">
-          <li>Video podcasts</li>
-          <li>Interviews</li>
-          <li>Branded formats</li>
+          <li>{t("videoPodcasts")}</li>
+          <li>{t("interviews")}</li>
+          <li>{t("brandedFormats")}</li>
         </ul>
       ),
     },
     {
-      title: "Audiobooks & Voice",
+      title: t("audiobooksVoice"),
       content: (
         <ul className="space-y-1">
-          <li>Audiobooks</li>
-          <li>Voiceover</li>
-          <li>Commercials</li>
+          <li>{t("audiobooks")}</li>
+          <li>{t("voiceover")}</li>
+          <li>{t("commercials")}</li>
         </ul>
       ),
     },
     {
-      title: "Creative Guidance",
+      title: t("creativeGuidance"),
       content: (
         <ul className="space-y-1">
-          <li>Concept</li>
-          <li>Direction</li>
-          <li>Strategy</li>
+          <li>{t("concept")}</li>
+          <li>{t("direction")}</li>
+          <li>{t("strategy")}</li>
         </ul>
       ),
     },
   ];
 
   const images = [
-    { src: "/images/camera.jpg", alt: "Sony camera setup", num: "01", desc: "Sony FX3 · GM 24mm · GM 50mm" },
-    { src: "/images/studio.jpg", alt: "Recording studio setup", num: "02", desc: "Description" },
-    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: "Description" },
+    { src: "/images/camera.jpg", alt: "Sony camera setup", num: "01", desc: t("img01Desc") },
+    { src: "/images/studio.jpg", alt: "Recording studio setup", num: "02", desc: t("img02Desc") },
+    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: t("img03Desc") },
   ];
 
   return (
@@ -802,7 +805,7 @@ function Services() {
         {/* Mobile */}
         <div className="md:hidden">
           <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-            Services
+            {t("headline")}
           </h2>
         </div>
         {/* Desktop: full-width 3-col grid */}
@@ -813,7 +816,7 @@ function Services() {
           >
             <div className="col-span-3" style={{ paddingLeft: "12px" }}>
               <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                Services
+                {t("headline")}
               </h2>
             </div>
           </div>
@@ -838,37 +841,37 @@ function Services() {
             {/* Row 1: col1 empty, Podcast Production starts at guideline1+12px, Video Content starts at guideline2+12px */}
             <div />
             <div style={{ paddingLeft: "12px" }}>
-              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Podcast Production</h3>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("podcastProduction")}</h3>
               <ul className="space-y-2">
-                <li className="text-sm text-white/50 leading-relaxed">Curated formats</li>
-                <li className="text-sm text-white/50 leading-relaxed">Dramaturgy</li>
-                <li className="text-sm text-white/50 leading-relaxed">Recording &amp; Post-production</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("curatedFormats")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("dramaturgy")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("recordingPost")}</li>
               </ul>
             </div>
             <div style={{ paddingLeft: "12px" }}>
-              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Video Content</h3>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("videoContent")}</h3>
               <ul className="space-y-2">
-                <li className="text-sm text-white/50 leading-relaxed">Video podcasts</li>
-                <li className="text-sm text-white/50 leading-relaxed">Interviews</li>
-                <li className="text-sm text-white/50 leading-relaxed">Branded formats</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("videoPodcasts")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("interviews")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("brandedFormats")}</li>
               </ul>
             </div>
             {/* Row 2 */}
             <div />
             <div style={{ paddingLeft: "12px" }}>
-              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Audiobooks &amp; Voice</h3>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("audiobooksVoice")}</h3>
               <ul className="space-y-2">
-                <li className="text-sm text-white/50 leading-relaxed">Audiobooks</li>
-                <li className="text-sm text-white/50 leading-relaxed">Voiceover</li>
-                <li className="text-sm text-white/50 leading-relaxed">Commercials</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("audiobooks")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("voiceover")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("commercials")}</li>
               </ul>
             </div>
             <div style={{ paddingLeft: "12px" }}>
-              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Creative Guidance</h3>
+              <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("creativeGuidance")}</h3>
               <ul className="space-y-2">
-                <li className="text-sm text-white/50 leading-relaxed">Concept</li>
-                <li className="text-sm text-white/50 leading-relaxed">Direction</li>
-                <li className="text-sm text-white/50 leading-relaxed">Strategy</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("concept")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("direction")}</li>
+                <li className="text-sm text-white/50 leading-relaxed">{t("strategy")}</li>
               </ul>
             </div>
           </div>
@@ -893,7 +896,7 @@ function Services() {
               <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Sony FX3 · GM 24mm · GM 50mm</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>
               </div>
             </div>
           </ParallaxBlock>
@@ -902,7 +905,7 @@ function Services() {
               <ParallaxImage src="/images/studio.jpg" alt="Recording studio" aspect="4/3" sizes="33vw" speed={0.03} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>
               </div>
             </div>
           </ParallaxBlock>
@@ -911,7 +914,7 @@ function Services() {
               <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="4/3" sizes="33vw" speed={0.02} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>
               </div>
             </div>
           </ParallaxBlock>
@@ -931,8 +934,7 @@ function Services() {
         {/* Mobile */}
         <div className="md:hidden">
           <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-            We guide the creative process from concept and dramaturgy through
-            recording and post&#8209;production.
+            {t("quote")}
           </h2>
         </div>
         {/* Desktop: full-width 3-col grid */}
@@ -943,8 +945,7 @@ function Services() {
           >
             <div className="col-span-3" style={{ paddingLeft: "12px" }}>
               <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                We guide the creative process from concept and dramaturgy through
-                recording and post&#8209;production.
+                {t("quote")}
               </h2>
             </div>
           </div>
@@ -959,15 +960,13 @@ function Services() {
         {/* Mobile */}
         <div className="md:hidden">
           <p className="text-[16px] text-white/60 leading-relaxed mb-10">
-            Our studio offers a rare combination of professional
-            infrastructure and a unique setting — whether for a few hours or
-            several focused days.
+            {t("quoteBody")}
           </p>
           <a
             href="#contact"
             className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
           >
-            Book a Session
+            {t("ctaBook")}
           </a>
         </div>
         {/* Desktop: full-width 3-col grid */}
@@ -979,15 +978,13 @@ function Services() {
             <div />
             <div className="col-span-2" style={{ paddingLeft: "12px" }}>
               <p className="text-base text-white/60 leading-relaxed max-w-2xl mb-14">
-                Our studio offers a rare combination of professional
-                infrastructure and a unique setting — whether for a few hours or
-                several focused days.
+                {t("quoteBody")}
               </p>
               <a
                 href="#contact"
                 className="inline-flex items-center justify-center px-8 py-3 text-xs tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
               >
-                Book a Session
+                {t("ctaBook")}
               </a>
             </div>
           </div>
@@ -999,20 +996,22 @@ function Services() {
 
 /* ─── APPROACH (HOW) ─── */
 function Approach() {
+  const t = useTranslations("approach");
+
   const blocksRef = useFadeIn<HTMLDivElement>(0.1, "0px 0px -60px 0px", 0.04);
 
   const approachItems: AccordionItemData[] = [
-    { title: "Idea", content: "We help shape your idea and format." },
-    { title: "Production", content: "Audio & video recording in our studio." },
-    { title: "Direction", content: "Dramaturgy, preparation and guidance." },
-    { title: "Output", content: "Post-production and ready-to-publish content." },
+    { title: t("idea"), content: t("ideaDesc") },
+    { title: t("production"), content: t("productionDesc") },
+    { title: t("directionTitle"), content: t("directionDesc") },
+    { title: t("output"), content: t("outputDesc") },
   ];
 
   const images = [
-    { src: "/images/camera.jpg", alt: "Sony camera", num: "01", desc: "Description" },
-    { src: "/images/mixer.jpg", alt: "Audio mixer", num: "02", desc: "Description" },
-    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: "Description" },
-    { src: "/images/books.jpg", alt: "Studio details", num: "04", desc: "Description" },
+    { src: "/images/camera.jpg", alt: "Sony camera", num: "01", desc: t("img01Desc") },
+    { src: "/images/mixer.jpg", alt: "Audio mixer", num: "02", desc: t("img02Desc") },
+    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: t("img03Desc") },
+    { src: "/images/books.jpg", alt: "Studio details", num: "04", desc: t("img04Desc") },
   ];
 
   return (
@@ -1034,7 +1033,7 @@ function Approach() {
               {/* Mobile */}
               <div className="md:hidden">
                 <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                  Approach
+                  {t("headline")}
                 </h2>
               </div>
               {/* Desktop: full-width 3-col grid */}
@@ -1045,7 +1044,7 @@ function Approach() {
                 >
                   <div className="col-span-3" style={{ paddingLeft: "12px" }}>
                     <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                      Approach
+                      {t("headline")}
                     </h2>
                   </div>
                 </div>
@@ -1067,22 +1066,22 @@ function Approach() {
               {/* Row 1: col1 empty, Idea starts at guideline1+12px, Production starts at guideline2+12px */}
               <div />
               <div style={{ paddingLeft: "12px" }}>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Idea</h3>
-                <p className="text-sm text-white/50 leading-relaxed">We help shape your idea and format.</p>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("idea")}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{t("ideaDesc")}</p>
               </div>
               <div style={{ paddingLeft: "12px" }}>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Production</h3>
-                <p className="text-sm text-white/50 leading-relaxed">Audio &amp; video recording in our studio.</p>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("production")}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{t("productionDesc")}</p>
               </div>
               {/* Row 2 */}
               <div />
               <div style={{ paddingLeft: "12px" }}>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Direction</h3>
-                <p className="text-sm text-white/50 leading-relaxed">Dramaturgy, preparation and guidance.</p>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("directionTitle")}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{t("directionDesc")}</p>
               </div>
               <div style={{ paddingLeft: "12px" }}>
-                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">Output</h3>
-                <p className="text-sm text-white/50 leading-relaxed">Post-production and ready-to-publish content.</p>
+                <h3 className="text-[24px] font-normal leading-[1.35] tracking-[0.01em] text-white uppercase mb-5">{t("output")}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{t("outputDesc")}</p>
               </div>
             </div>
           </div>
@@ -1106,7 +1105,7 @@ function Approach() {
                 <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>
                 </div>
               </div>
             </ParallaxBlock>
@@ -1115,7 +1114,7 @@ function Approach() {
                 <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>
                 </div>
               </div>
             </ParallaxBlock>
@@ -1124,7 +1123,7 @@ function Approach() {
                 <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>
                 </div>
               </div>
             </ParallaxBlock>
@@ -1133,7 +1132,7 @@ function Approach() {
                 <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">Description</p>
+                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img04Desc")}</p>
                 </div>
               </div>
             </ParallaxBlock>
@@ -1150,15 +1149,17 @@ function Approach() {
 
 /* ─── PRICE ─── */
 function Price() {
+  const t = useTranslations("price");
+
   const quoteRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.06);
 
   const priceItems: AccordionItemData[] = [
-    { title: "Shooting Session", content: "Professional studio session with full equipment and guidance. Contact us for a custom quote based on your project needs." },
-    { title: "Motion Design", content: "Animated graphics and visual elements for your content. Pricing depends on complexity and duration." },
-    { title: "Sound Design", content: "Custom sound design, mixing and mastering for podcasts, audiobooks, and video content." },
-    { title: "Podcast Identity", content: "Complete podcast branding including intro/outro, jingles, and visual identity." },
-    { title: "Strategy and Dramaturgy", content: "Content strategy, narrative structure, and creative direction for your project." },
-    { title: "Production", content: "End-to-end production services from pre-production through final delivery." },
+    { title: t("shootingSession"), content: t("shootingSessionDesc") },
+    { title: t("motionDesign"), content: t("motionDesignDesc") },
+    { title: t("soundDesign"), content: t("soundDesignDesc") },
+    { title: t("podcastIdentity"), content: t("podcastIdentityDesc") },
+    { title: t("strategyDramaturgy"), content: t("strategyDramaturgyDesc") },
+    { title: t("productionTitle"), content: t("productionDesc") },
   ];
 
   return (
@@ -1192,8 +1193,7 @@ function Price() {
         {/* Mobile */}
         <div className="md:hidden">
           <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-            Different project requires different needs. We prefer to meet you in person
-            and look at your case individually.
+            {t("quote")}
           </h2>
         </div>
         {/* Desktop: full-width 4-col grid */}
@@ -1204,8 +1204,7 @@ function Price() {
           >
             <div className="col-span-4" style={{ paddingLeft: "12px" }}>
               <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
-                Different project requires different needs. We prefer to meet you in person
-                and look at your case individually.
+                {t("quote")}
               </h2>
             </div>
           </div>
@@ -1217,6 +1216,9 @@ function Price() {
 
 /* ─── CONTACT ─── */
 function Contact() {
+  const tContact = useTranslations("contact");
+  const tFooter = useTranslations("footer");
+
   const formRef = useFadeIn<HTMLDivElement>(0.15, "0px 0px -60px 0px", 0.04);
   const [formState, setFormState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [formData, setFormData] = useState({ name: "", contact: "", message: "" });
@@ -1291,14 +1293,14 @@ function Contact() {
             <div className="col-span-2" style={{ paddingLeft: "12px", paddingRight: "12px" }}>
               {formState === "sent" ? (
                 <p className="text-sm tracking-[0.1em] text-white/60 uppercase py-8">
-                  Thank you. We&apos;ll get back to you soon.
+                  {tContact("thankYou")}
                 </p>
               ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <input
                     type="text"
-                    placeholder="YOUR NAME"
+                    placeholder={tContact("placeholderName")}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -1306,7 +1308,7 @@ function Contact() {
                   />
                   <input
                     type="text"
-                    placeholder="PHONE OR EMAIL"
+                    placeholder={tContact("placeholderContact")}
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                     required
@@ -1314,7 +1316,7 @@ function Contact() {
                   />
                 </div>
                 <textarea
-                  placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+                  placeholder={tContact("placeholderMessage")}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
@@ -1326,7 +1328,7 @@ function Contact() {
                   disabled={formState === "sending"}
                   className="inline-flex items-center justify-center px-10 py-3 text-sm tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors disabled:opacity-50"
                 >
-                  {formState === "sending" ? "Sending..." : formState === "error" ? "Try Again" : "Let Me Know"}
+                  {formState === "sending" ? tContact("sending") : formState === "error" ? tContact("tryAgain") : tContact("submit")}
                 </button>
               </form>
               )}
@@ -1338,13 +1340,13 @@ function Contact() {
         <div className="md:hidden">
           {formState === "sent" ? (
             <p className="text-[16px] text-white/60 uppercase py-8">
-              Thank you. We&apos;ll get back to you soon.
+              {tContact("thankYou")}
             </p>
           ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
-              placeholder="YOUR NAME"
+              placeholder={tContact("placeholderName")}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
@@ -1352,14 +1354,14 @@ function Contact() {
             />
             <input
               type="text"
-              placeholder="PHONE OR EMAIL"
+              placeholder={tContact("placeholderContact")}
               value={formData.contact}
               onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
               required
               className="w-full bg-transparent border border-white/20 rounded-[24px] px-6 py-3 text-[16px] text-white placeholder:text-white/30 uppercase focus:outline-none focus:border-white/50 transition-colors"
             />
             <textarea
-              placeholder="DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN"
+              placeholder={tContact("placeholderMessage")}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               required
@@ -1371,7 +1373,7 @@ function Contact() {
               disabled={formState === "sending"}
               className="inline-flex items-center justify-center px-10 py-3 text-[16px] tracking-[0.15em] uppercase font-normal bg-white text-[#0F0F0F] rounded-full hover:bg-white/90 transition-colors disabled:opacity-50"
             >
-              {formState === "sending" ? "Sending..." : formState === "error" ? "Try Again" : "Let Me Know"}
+              {formState === "sending" ? tContact("sending") : formState === "error" ? tContact("tryAgain") : tContact("submit")}
             </button>
           </form>
           )}
@@ -1390,34 +1392,38 @@ function Contact() {
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
                 &copy; {new Date().getFullYear()} alwaysfriday.live
               </p>
+              <div className="mt-4">
+                <LanguageSwitcher />
+              </div>
             </div>
             <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
-                Studio Řevnice
+                {tFooter("studioRevnice")}
               </p>
               <p className="text-sm text-white/50 leading-relaxed">
-                Co-work Meandr, Dům Sylvie,<br />
-                náměstí Krále Jiřího z Poděbrad 2,<br />
-                Řevnice
-              </p>
-            </div>
-            <div style={{ paddingLeft: "12px" }}>
-              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
-                Studio Praha Nusle
-              </p>
-              <p className="text-sm text-white/50 leading-relaxed">
-                Táborská 317/65,<br />
-                Praha 4
+                {tFooter("studioRevniceAddr").split("\n").map((line, i, arr) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
               </p>
             </div>
             <div style={{ paddingLeft: "12px" }}>
               <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
-                Fakturační údaje
+                {tFooter("studioPraha")}
               </p>
               <p className="text-sm text-white/50 leading-relaxed">
-                Alwaysfriday s.r.o.,<br />
-                U Ladronky 1167/30,<br />
-                Břevnov, Praha 6, 169 00
+                {tFooter("studioPrahaAddr").split("\n").map((line, i, arr) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
+              </p>
+            </div>
+            <div style={{ paddingLeft: "12px" }}>
+              <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-4">
+                {tFooter("billing")}
+              </p>
+              <p className="text-sm text-white/50 leading-relaxed">
+                {tFooter("billingAddr").split("\n").map((line, i, arr) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
               </p>
             </div>
           </div>
@@ -1428,34 +1434,41 @@ function Contact() {
         <div className="md:hidden space-y-8">
           <div>
             <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
-              Studio Řevnice
+              {tFooter("studioRevnice")}
             </p>
             <p className="text-sm text-white/50 leading-relaxed">
-              Co-work Meandr, Dům Sylvie,<br />
-              náměstí Krále Jiřího z Poděbrad 2, Řevnice
+              {tFooter("studioRevniceAddr").split("\n").map((line, i, arr) => (
+                <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </p>
           </div>
           <div>
             <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
-              Studio Praha Nusle
+              {tFooter("studioPraha")}
             </p>
             <p className="text-sm text-white/50 leading-relaxed">
-              Táborská 317/65, Praha 4
+              {tFooter("studioPrahaAddr").split("\n").map((line, i, arr) => (
+                <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </p>
           </div>
           <div>
             <p className="text-[10px] tracking-[0.3em] text-white/30 uppercase mb-3">
-              Fakturační údaje
+              {tFooter("billing")}
             </p>
             <p className="text-sm text-white/50 leading-relaxed">
-              Alwaysfriday s.r.o.,<br />
-              U Ladronky 1167/30, Břevnov, Praha 6, 169 00
+              {tFooter("billingAddr").split("\n").map((line, i, arr) => (
+                <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </p>
           </div>
           <div className="mt-12 pb-8">
             <p className="text-xs text-white/20">
               &copy; {new Date().getFullYear()} alwaysfriday.live
             </p>
+            <div className="mt-4">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </footer>

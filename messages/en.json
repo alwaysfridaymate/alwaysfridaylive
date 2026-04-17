@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "brand": "ALWAYSFRIDAY",
+    "services": "Services",
+    "approach": "Approach",
+    "pricing": "Pricing",
+    "booking": "Booking"
+  },
+  "hero": {
+    "tagline": "Curated Audio & Video Creation",
+    "headline": "Podcasts, audiobooks and voiceovers with guidance, dramaturgy and\u00a0quality.",
+    "cta": "Book a Session"
+  },
+  "about": {
+    "headline": "From idea to finished content. In one\u00a0place.",
+    "body1": "Alwaysfriday.live is a curated studio for audio and video content with long-term value.",
+    "body2": "Our approach is based on focus, calm environment and thoughtful guidance. Every project is treated with attention and care.",
+    "ctaPricing": "Pricing"
+  },
+  "services": {
+    "headline": "Services",
+    "podcastProduction": "Podcast Production",
+    "curatedFormats": "Curated formats",
+    "dramaturgy": "Dramaturgy",
+    "recordingPost": "Recording & Post-production",
+    "videoContent": "Video Content",
+    "videoPodcasts": "Video podcasts",
+    "interviews": "Interviews",
+    "brandedFormats": "Branded formats",
+    "audiobooksVoice": "Audiobooks & Voice",
+    "audiobooks": "Audiobooks",
+    "voiceover": "Voiceover",
+    "commercials": "Commercials",
+    "creativeGuidance": "Creative Guidance",
+    "concept": "Concept",
+    "direction": "Direction",
+    "strategy": "Strategy",
+    "img01Desc": "Sony FX3 · GM 24mm · GM 50mm",
+    "img02Desc": "Description",
+    "img03Desc": "Description",
+    "quote": "We guide the creative process from concept and dramaturgy through recording and post\u2011production.",
+    "quoteBody": "Our studio offers a rare combination of professional infrastructure and a unique setting — whether for a few hours or several focused days.",
+    "ctaBook": "Book a Session"
+  },
+  "approach": {
+    "headline": "Approach",
+    "idea": "Idea",
+    "ideaDesc": "We help shape your idea and format.",
+    "production": "Production",
+    "productionDesc": "Audio & video recording in our studio.",
+    "directionTitle": "Direction",
+    "directionDesc": "Dramaturgy, preparation and guidance.",
+    "output": "Output",
+    "outputDesc": "Post-production and ready-to-publish content.",
+    "img01Desc": "Description",
+    "img02Desc": "Description",
+    "img03Desc": "Description",
+    "img04Desc": "Description"
+  },
+  "price": {
+    "shootingSession": "Shooting Session",
+    "shootingSessionDesc": "Professional studio session with full equipment and guidance. Contact us for a custom quote based on your project needs.",
+    "motionDesign": "Motion Design",
+    "motionDesignDesc": "Animated graphics and visual elements for your content. Pricing depends on complexity and duration.",
+    "soundDesign": "Sound Design",
+    "soundDesignDesc": "Custom sound design, mixing and mastering for podcasts, audiobooks, and video content.",
+    "podcastIdentity": "Podcast Identity",
+    "podcastIdentityDesc": "Complete podcast branding including intro/outro, jingles, and visual identity.",
+    "strategyDramaturgy": "Strategy and Dramaturgy",
+    "strategyDramaturgyDesc": "Content strategy, narrative structure, and creative direction for your project.",
+    "productionTitle": "Production",
+    "productionDesc": "End-to-end production services from pre-production through final delivery.",
+    "quote": "Different project requires different needs. We prefer to meet you in person and look at your case individually."
+  },
+  "contact": {
+    "thankYou": "Thank you. We'll get back to you soon.",
+    "placeholderName": "YOUR NAME",
+    "placeholderContact": "PHONE OR EMAIL",
+    "placeholderMessage": "DESCRIBE YOUR PLAN OR WHAT ARE YOU INTERESTED IN",
+    "sending": "Sending...",
+    "tryAgain": "Try Again",
+    "submit": "Let Me Know"
+  },
+  "footer": {
+    "studioRevnice": "Studio Řevnice",
+    "studioRevniceAddr": "Co-work Meandr, Dům Sylvie,\nnáměstí Krále Jiřího z Poděbrad 2,\nŘevnice",
+    "studioPraha": "Studio Praha Nusle",
+    "studioPrahaAddr": "Táborská 317/65,\nPraha 4",
+    "billing": "Billing Details",
+    "billingAddr": "Alwaysfriday s.r.o.,\nU Ladronky 1167/30,\nBřevnov, Praha 6, 169 00"
+  },
+  "lang": {
+    "cs": "Čeština",
+    "en": "English"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "brand": "ALWAYSFRIDAY",
+    "services": "Služby",
+    "approach": "Přístup",
+    "pricing": "Ceník",
+    "booking": "Rezervace"
+  },
+  "hero": {
+    "tagline": "Kurátorská Audio & Video Tvorba",
+    "headline": "Podcasty, audioknihy a voiceovery s vedením, dramaturgií a\u00a0kvalitou.",
+    "cta": "Rezervovat Termín"
+  },
+  "about": {
+    "headline": "Od nápadu po hotový obsah. Na jednom\u00a0místě.",
+    "body1": "Alwaysfriday.live je kurátorské studio pro audio a video obsah s dlouhodobou hodnotou.",
+    "body2": "Náš přístup staví na soustředění, klidném prostředí a promyšleném vedení. Každý projekt dostává pozornost a péči.",
+    "ctaPricing": "Ceník"
+  },
+  "services": {
+    "headline": "Služby",
+    "podcastProduction": "Produkce Podcastů",
+    "curatedFormats": "Kurátorské formáty",
+    "dramaturgy": "Dramaturgie",
+    "recordingPost": "Nahrávání & Post-produkce",
+    "videoContent": "Video Obsah",
+    "videoPodcasts": "Video podcasty",
+    "interviews": "Rozhovory",
+    "brandedFormats": "Brandové formáty",
+    "audiobooksVoice": "Audioknihy & Voice",
+    "audiobooks": "Audioknihy",
+    "voiceover": "Voiceover",
+    "commercials": "Reklamy",
+    "creativeGuidance": "Kreativní Vedení",
+    "concept": "Koncept",
+    "direction": "Režie",
+    "strategy": "Strategie",
+    "img01Desc": "Sony FX3 · GM 24mm · GM 50mm",
+    "img02Desc": "Popis",
+    "img03Desc": "Popis",
+    "quote": "Provázíme kreativním procesem od konceptu a dramaturgie přes nahrávání až po post‑produkci.",
+    "quoteBody": "Naše studio nabízí vzácnou kombinaci profesionální infrastruktury a unikátního prostředí — ať už na pár hodin nebo několik soustředěných dní.",
+    "ctaBook": "Rezervovat Termín"
+  },
+  "approach": {
+    "headline": "Přístup",
+    "idea": "Nápad",
+    "ideaDesc": "Pomůžeme tvarovat váš nápad a formát.",
+    "production": "Produkce",
+    "productionDesc": "Audio & video nahrávání v našem studiu.",
+    "directionTitle": "Režie",
+    "directionDesc": "Dramaturgie, příprava a vedení.",
+    "output": "Výstup",
+    "outputDesc": "Post-produkce a obsah připravený k publikaci.",
+    "img01Desc": "Popis",
+    "img02Desc": "Popis",
+    "img03Desc": "Popis",
+    "img04Desc": "Popis"
+  },
+  "price": {
+    "shootingSession": "Natáčecí Session",
+    "shootingSessionDesc": "Profesionální studiová session s kompletním vybavením a vedením. Kontaktujte nás pro individuální nabídku dle potřeb vašeho projektu.",
+    "motionDesign": "Motion Design",
+    "motionDesignDesc": "Animovaná grafika a vizuální prvky pro váš obsah. Cena závisí na složitosti a délce.",
+    "soundDesign": "Sound Design",
+    "soundDesignDesc": "Zakázkový sound design, mix a mastering pro podcasty, audioknihy a video obsah.",
+    "podcastIdentity": "Podcast Identita",
+    "podcastIdentityDesc": "Kompletní branding podcastu včetně intra/outra, znělky a vizuální identity.",
+    "strategyDramaturgy": "Strategie a Dramaturgie",
+    "strategyDramaturgyDesc": "Obsahová strategie, narativní struktura a kreativní vedení pro váš projekt.",
+    "productionTitle": "Produkce",
+    "productionDesc": "Kompletní produkční služby od pre-produkce až po finální dodání.",
+    "quote": "Každý projekt vyžaduje jiný přístup. Raději se s vámi setkáme osobně a podíváme se na váš případ individuálně."
+  },
+  "contact": {
+    "thankYou": "Děkujeme. Brzy se vám ozveme.",
+    "placeholderName": "VAŠE JMÉNO",
+    "placeholderContact": "TELEFON NEBO EMAIL",
+    "placeholderMessage": "POPIŠTE VÁŠ PLÁN NEBO CO VÁS ZAJÍMÁ",
+    "sending": "Odesílání...",
+    "tryAgain": "Zkusit Znovu",
+    "submit": "Dejte Nám Vědět"
+  },
+  "footer": {
+    "studioRevnice": "Studio Řevnice",
+    "studioRevniceAddr": "Co-work Meandr, Dům Sylvie,\nnáměstí Krále Jiřího z Poděbrad 2,\nŘevnice",
+    "studioPraha": "Studio Praha Nusle",
+    "studioPrahaAddr": "Táborská 317/65,\nPraha 4",
+    "billing": "Fakturační údaje",
+    "billingAddr": "Alwaysfriday s.r.o.,\nU Ladronky 1167/30,\nBřevnov, Praha 6, 169 00"
+  },
+  "lang": {
+    "cs": "Čeština",
+    "en": "English"
+  }
+}
