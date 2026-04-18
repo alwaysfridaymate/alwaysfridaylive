@@ -458,25 +458,29 @@ function Accordion({
               className="w-full flex items-center justify-between py-5 md:py-6 text-left"
               onClick={() => setOpenIndex(isOpen ? null : i)}
             >
-              <span className="text-[16px] md:text-[18px] tracking-[0.15em] text-white uppercase font-normal">
+              <span className="text-[16px] md:text-[18px] tracking-[0.15em] text-white uppercase font-normal pr-4">
                 {item.title}
               </span>
               <span
-                className="text-white/40 text-xl transition-transform duration-300"
+                className="text-white/40 text-xl flex-shrink-0 transition-transform duration-300"
                 style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0)" }}
               >
                 +
               </span>
             </button>
             <div
-              className="overflow-hidden transition-all duration-400"
+              className="grid transition-[grid-template-rows] duration-500 ease-in-out"
               style={{
-                maxHeight: isOpen ? "2000px" : "0",
-                opacity: isOpen ? 1 : 0,
+                gridTemplateRows: isOpen ? "1fr" : "0fr",
               }}
             >
-              <div className="pb-6 text-sm md:text-base text-white/50 leading-relaxed">
-                {item.content}
+              <div className="overflow-hidden">
+                <div
+                  className="pb-6 text-sm md:text-base text-white/50 leading-relaxed transition-opacity duration-300"
+                  style={{ opacity: isOpen ? 1 : 0 }}
+                >
+                  {item.content}
+                </div>
               </div>
             </div>
           </div>
@@ -514,9 +518,11 @@ function ImageCarousel({
               <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">
                 {img.num}
               </p>
-              <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
-                {img.desc}
-              </p>
+              {img.desc && (
+                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">
+                  {img.desc}
+                </p>
+              )}
             </div>
           </div>
         ))}
@@ -670,7 +676,7 @@ function Hero() {
         >
           {/* Mobile H2 */}
           <div className="md:hidden">
-            <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+            <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
               {tAbout("headline")}
             </h2>
           </div>
@@ -681,7 +687,7 @@ function Hero() {
               style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
             >
               <div className="col-span-3" style={{ paddingLeft: "12px" }}>
-                <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                   {tAbout("headline")}
                 </h2>
               </div>
@@ -804,7 +810,7 @@ function Services() {
       >
         {/* Mobile */}
         <div className="md:hidden">
-          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
             {t("headline")}
           </h2>
         </div>
@@ -815,7 +821,7 @@ function Services() {
             style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
           >
             <div className="col-span-3" style={{ paddingLeft: "12px" }}>
-              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                 {t("headline")}
               </h2>
             </div>
@@ -896,7 +902,7 @@ function Services() {
               <ParallaxImage src="/images/camera.jpg" alt="Sony camera setup" aspect="4/3" sizes="33vw" speed={0.02} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>
+                {t("img01Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>}
               </div>
             </div>
           </ParallaxBlock>
@@ -905,7 +911,7 @@ function Services() {
               <ParallaxImage src="/images/studio.jpg" alt="Recording studio" aspect="4/3" sizes="33vw" speed={0.03} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>
+                {t("img02Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>}
               </div>
             </div>
           </ParallaxBlock>
@@ -914,7 +920,7 @@ function Services() {
               <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="4/3" sizes="33vw" speed={0.02} />
               <div className="flex items-baseline justify-between mt-3 px-1">
                 <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-                <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>
+                {t("img03Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>}
               </div>
             </div>
           </ParallaxBlock>
@@ -933,7 +939,7 @@ function Services() {
       >
         {/* Mobile */}
         <div className="md:hidden">
-          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
             {t("quote")}
           </h2>
         </div>
@@ -944,7 +950,7 @@ function Services() {
             style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
           >
             <div className="col-span-3" style={{ paddingLeft: "12px" }}>
-              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                 {t("quote")}
               </h2>
             </div>
@@ -1032,7 +1038,7 @@ function Approach() {
             <ParallaxBlock speed={0.04} className="w-full">
               {/* Mobile */}
               <div className="md:hidden">
-                <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                   {t("headline")}
                 </h2>
               </div>
@@ -1043,7 +1049,7 @@ function Approach() {
                   style={{ gridTemplateColumns: "33.333% 33.333% 33.334%" }}
                 >
                   <div className="col-span-3" style={{ paddingLeft: "12px" }}>
-                    <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+                    <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                       {t("headline")}
                     </h2>
                   </div>
@@ -1105,7 +1111,7 @@ function Approach() {
                 <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>
+                  {t("img01Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>}
                 </div>
               </div>
             </ParallaxBlock>
@@ -1114,7 +1120,7 @@ function Approach() {
                 <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>
+                  {t("img02Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>}
                 </div>
               </div>
             </ParallaxBlock>
@@ -1123,7 +1129,7 @@ function Approach() {
                 <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>
+                  {t("img03Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>}
                 </div>
               </div>
             </ParallaxBlock>
@@ -1132,7 +1138,7 @@ function Approach() {
                 <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
-                  <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img04Desc")}</p>
+                  {t("img04Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img04Desc")}</p>}
                 </div>
               </div>
             </ParallaxBlock>
@@ -1314,14 +1320,14 @@ function Model() {
       {/* Creative Subscription subtitle */}
       <div className="px-3 mt-4 md:mt-8 mb-16 md:mb-24">
         <div className="md:hidden">
-          <h2 className="text-[28px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          <h2 className="text-[28px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
             {t("subtitle")}
           </h2>
         </div>
         <div className="hidden md:block">
           <div className="grid" style={{ gridTemplateColumns: "25% 25% 25% 25%" }}>
             <div className="col-span-4" style={{ paddingLeft: "12px" }}>
-              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                 {t("subtitle")}
               </h2>
             </div>
@@ -1354,7 +1360,7 @@ function Model() {
       <div ref={quoteRef} className="fade-up px-3">
         {/* Mobile */}
         <div className="md:hidden">
-          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
             {t("quote")}
           </h2>
         </div>
@@ -1365,7 +1371,7 @@ function Model() {
             style={{ gridTemplateColumns: "25% 25% 25% 25%" }}
           >
             <div className="col-span-4" style={{ paddingLeft: "12px" }}>
-              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase">
+              <h2 className="text-[42px] lg:text-[52px] font-semibold leading-[1.15] tracking-tight text-white uppercase max-w-[80vw]">
                 {t("quote")}
               </h2>
             </div>

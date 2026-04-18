@@ -3,19 +3,19 @@
     "brand": "ALWAYSFRIDAY",
     "services": "Služby",
     "approach": "Přístup",
-    "pricing": "Model",
+    "pricing": "Cena",
     "booking": "Konzultace"
   },
   "hero": {
-    "tagline": "Audio a video obsah, který má jasný formát a\u00a0smysl",
-    "headline": "Podcasty, audioknihy, voiceovery a video formáty s vedením od nápadu po finální\u00a0výstup.",
-    "cta": "Domluvit úvodní konzultaci"
+    "tagline": "Kurátorská Audio & Video Tvorba",
+    "headline": "Podcasty, audioknihy, voiceovery a video formáty s vedením, dramaturgií a kvalitou.",
+    "cta": "Domluvit konzultaci"
   },
   "about": {
-    "headline": "Od nápadu po hotový výstup. Na jednom\u00a0místě.",
+    "headline": "Od nápadu po hotový výstup. Na jednom místě.",
     "body1": "Alwaysfriday.live je studio pro audio a video obsah, který nevzniká jen na jedno použití, ale funguje i v delším horizontu.",
-    "body2": "Pracujeme v klidném prostředí, s jasným vedením a důrazem na to, aby každý formát měl dobrý obsah, dobrý zvuk a použitelný výstup.",
-    "ctaPricing": "Model"
+    "body2": "Pracujeme v klidném prostředí, s jasným vedením a důrazem na to, aby každý formát měl dobrý obsah, dobrý zvuk a kvalitní výstup.",
+    "ctaPricing": "Cena"
   },
   "services": {
     "headline": "Služby",
@@ -35,9 +35,9 @@
     "concept": "Koncept",
     "direction": "Režie",
     "strategy": "Směr formátu",
-    "img01Desc": "Sony FX3 · GM 24mm · GM 50mm",
-    "img02Desc": "Profesionální obraz a zvuk bez zbytečné produkční okázalosti.",
-    "img03Desc": "Prostor, kde se dá několik hodin v klidu soustředit jen na obsah.",
+    "img01Desc": "",
+    "img02Desc": "",
+    "img03Desc": "",
     "quote": "Neřešíme jen samotné natáčení. Pomáháme držet celý proces pohromadě od prvního nápadu po finální materiál.",
     "quoteBody": "Studio spojuje profesionální technické zázemí s prostředím, kde se dá několik hodin nebo i několik dní soustředit na práci bez zbytečného vytržení.",
     "ctaBook": "Rezervovat termín"
@@ -52,10 +52,10 @@
     "directionDesc": "Připravíme dramaturgii, průběh session a pomůžeme i během samotného nahrávání.",
     "output": "Výstup",
     "outputDesc": "Dostanete hotový obsah připravený k použití a publikaci.",
-    "img01Desc": "Každý formát potřebuje jiný rytmus, jinou přípravu a jiný způsob vedení.",
-    "img02Desc": "Session plánujeme tak, aby z jednoho natáčení vzniklo co nejvíc použitelných výstupů.",
-    "img03Desc": "Neřešíme jen techniku, ale i obsah, tempo a to, co má z výsledku zůstat.",
-    "img04Desc": "Výstup připravujeme tak, aby byl rovnou použitelný pro web, audio platformy i sociální sítě."
+    "img01Desc": "",
+    "img02Desc": "",
+    "img03Desc": "",
+    "img04Desc": ""
   },
   "model": {
     "subtitle": "Creative Subscription",

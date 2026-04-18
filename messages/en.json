@@ -3,19 +3,19 @@
     "brand": "ALWAYSFRIDAY",
     "services": "Services",
     "approach": "Approach",
-    "pricing": "Model",
+    "pricing": "Pricing",
     "booking": "Consultation"
   },
   "hero": {
-    "tagline": "Audio and video content with a clear format and\u00a0purpose",
-    "headline": "Podcasts, audiobooks, voiceovers and video formats with guidance from idea to final\u00a0output.",
-    "cta": "Book an intro consultation"
+    "tagline": "Curated Audio & Video Creation",
+    "headline": "Podcasts, audiobooks, voiceovers and video formats with guidance, dramaturgy and quality.",
+    "cta": "Book a consultation"
   },
   "about": {
-    "headline": "From idea to finished output. In one\u00a0place.",
+    "headline": "From idea to finished output. In one place.",
     "body1": "Alwaysfriday.live is a studio for audio and video content that isn\u2019t made for one-time use but works over a longer horizon.",
-    "body2": "We work in a calm environment, with clear guidance and a focus on making sure every format has good content, good sound and a usable output.",
-    "ctaPricing": "Model"
+    "body2": "We work in a calm environment, with clear guidance and a focus on making sure every format has good content, good sound and a quality output.",
+    "ctaPricing": "Pricing"
   },
   "services": {
     "headline": "Services",
@@ -35,9 +35,9 @@
     "concept": "Concept",
     "direction": "Direction",
     "strategy": "Format direction",
-    "img01Desc": "Sony FX3 \u00b7 GM 24mm \u00b7 GM 50mm",
-    "img02Desc": "Professional image and sound without unnecessary production spectacle.",
-    "img03Desc": "A space where you can spend hours focused purely on content.",
+    "img01Desc": "",
+    "img02Desc": "",
+    "img03Desc": "",
     "quote": "We don\u2019t just handle the recording itself. We help keep the entire process together from the first idea to the final material.",
     "quoteBody": "The studio combines professional technical infrastructure with an environment where you can focus on the work for hours or even days without unnecessary interruption.",
     "ctaBook": "Book a session"
@@ -52,10 +52,10 @@
     "directionDesc": "We prepare the dramaturgy, session flow and help during the recording itself.",
     "output": "Output",
     "outputDesc": "You receive finished content ready for use and publication.",
-    "img01Desc": "Every format needs a different rhythm, different preparation and a different kind of guidance.",
-    "img02Desc": "We plan sessions so that a single recording produces as many usable outputs as possible.",
-    "img03Desc": "We don\u2019t just deal with the technical side \u2014 we also focus on content, pacing and what should remain in the result.",
-    "img04Desc": "We prepare outputs so they\u2019re immediately usable for web, audio platforms and social media."
+    "img01Desc": "",
+    "img02Desc": "",
+    "img03Desc": "",
+    "img04Desc": ""
   },
   "model": {
     "subtitle": "Creative Subscription",
