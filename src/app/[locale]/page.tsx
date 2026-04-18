@@ -505,7 +505,7 @@ function ImageCarousel({
       <div className="flex gap-3" style={{ width: `${images.length * 70}vw` }}>
         {images.map((img, i) => (
           <div key={i} className="flex-shrink-0" style={{ width: "65vw" }}>
-            <div className="relative overflow-hidden" style={{ aspectRatio: "3/2" }}>
+            <div className="relative overflow-hidden" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={img.src}
                 alt={img.alt}
@@ -534,42 +534,116 @@ function ImageCarousel({
 /* ─── NAV ─── */
 function Nav() {
   const t = useTranslations("nav");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close menu on route / hash change
+  const closeMenu = useCallback(() => setMobileOpen(false), []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const navLinks = [
+    { href: "#services", label: t("services") },
+    { href: "#approach", label: t("approach") },
+    { href: "#pricing", label: t("pricing") },
+    { href: "#contact", label: t("booking") },
+  ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
-      <nav className="mx-auto flex items-center px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
-        <a
-          href="#"
-          className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase shrink-0"
-        >
-          {t("brand")}
-        </a>
-        {/* Desktop nav — evenly distributed between logo and CTA */}
-        <div className="hidden md:flex items-center justify-evenly flex-1">
-          <a href="#services" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            {t("services")}
+    <>
+      <header className="fixed top-0 left-0 right-0 z-[100] mix-blend-difference">
+        <nav className="mx-auto flex items-center px-3 md:px-12 lg:px-16 h-16 md:h-20 max-w-[1920px]">
+          <a
+            href="#"
+            className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase shrink-0"
+          >
+            {t("brand")}
           </a>
-          <a href="#approach" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            {t("approach")}
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center justify-evenly flex-1">
+            <a href="#services" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
+              {t("services")}
+            </a>
+            <a href="#approach" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
+              {t("approach")}
+            </a>
+            <a href="#pricing" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
+              {t("pricing")}
+            </a>
+          </div>
+          <a
+            href="#contact"
+            className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors shrink-0"
+          >
+            {t("booking")}
           </a>
-          <a href="#pricing" className="text-sm md:text-base font-normal tracking-[0.2em] text-white uppercase hover:text-white/70 transition-colors">
-            {t("pricing")}
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-white ml-auto relative z-[110]"
+            aria-label="Menu"
+            onClick={() => setMobileOpen(true)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M3 8h18M3 16h18" />
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      {/* Mobile fullscreen menu overlay */}
+      <div
+        className={`fixed inset-0 z-[200] md:hidden transition-opacity duration-300 ${
+          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        style={{ backgroundColor: "#1C1B1A" }}
+      >
+        {/* Close button */}
+        <div className="flex items-center justify-between px-3 h-16">
+          <a
+            href="#"
+            onClick={closeMenu}
+            className="text-sm font-normal tracking-[0.2em] text-white uppercase"
+          >
+            {t("brand")}
           </a>
+          <button
+            onClick={closeMenu}
+            className="text-white"
+            aria-label="Close menu"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
         </div>
-        <a
-          href="#contact"
-          className="hidden md:inline-flex items-center justify-center px-6 py-2 text-sm font-normal tracking-[0.15em] uppercase border border-white text-white rounded-full hover:bg-white/10 transition-colors shrink-0"
-        >
-          {t("booking")}
-        </a>
-        {/* Mobile menu */}
-        <button className="md:hidden text-white ml-auto" aria-label="Menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 8h18M3 16h18" />
-          </svg>
-        </button>
-      </nav>
-    </header>
+
+        {/* Nav links */}
+        <div className="flex flex-col items-start px-3 mt-12 gap-8">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={closeMenu}
+              className="text-[28px] tracking-[0.1em] text-white uppercase font-normal"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        {/* Language switcher at bottom */}
+        <div className="absolute bottom-12 left-3">
+          <LanguageSwitcher />
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -601,7 +675,7 @@ function Hero() {
         </div>
 
         {/* .LIVE SVG overlay */}
-        <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none">
+        <ParallaxSvg speed={-0.04} className="absolute inset-0 flex items-center justify-center z-10 px-4 md:px-8 mix-blend-exclusion pointer-events-none pb-[15vh] md:pb-[10vh]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/live.svg"
@@ -634,7 +708,7 @@ function Hero() {
             <div className="isolate">
               <a
                 href="#contact"
-                className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center px-6 py-2.5 text-[13px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
               >
                 {t("cta")}
               </a>
@@ -706,7 +780,7 @@ function Hero() {
             </p>
             <a
               href="#pricing"
-              className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-2.5 text-[13px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
             >
               {tAbout("ctaPricing")}
             </a>
@@ -970,7 +1044,7 @@ function Services() {
           </p>
           <a
             href="#contact"
-            className="inline-flex items-center justify-center px-8 py-3 text-[16px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-[13px] tracking-[0.15em] uppercase font-normal border border-white text-white rounded-full hover:bg-white/10 transition-colors"
           >
             {t("ctaBook")}
           </a>
