@@ -1088,10 +1088,10 @@ function Approach() {
   ];
 
   const images = [
-    { src: "/images/camera.jpg", alt: "Sony camera", num: "01", desc: t("img01Desc") },
-    { src: "/images/mixer.jpg", alt: "Audio mixer", num: "02", desc: t("img02Desc") },
-    { src: "/images/mic.jpg", alt: "Studio microphone", num: "03", desc: t("img03Desc") },
-    { src: "/images/books.jpg", alt: "Studio details", num: "04", desc: t("img04Desc") },
+    { src: "/images/approach01.jpg", alt: "Studio interior with podcast setup", num: "01", desc: t("img01Desc") },
+    { src: "/images/approach02.jpg", alt: "Operator with gimbal camera", num: "02", desc: t("img02Desc") },
+    { src: "/images/approach03.jpg", alt: "Behind the scenes of a shoot", num: "03", desc: t("img03Desc") },
+    { src: "/images/approach04.jpg", alt: "Studio lighting and camera setup", num: "04", desc: t("img04Desc") },
   ];
 
   return (
@@ -1182,7 +1182,7 @@ function Approach() {
           >
             <ParallaxBlock speed={0.035} className="lg:mt-0">
               <div style={{ paddingRight: "12px" }}>
-                <ParallaxImage src="/images/camera.jpg" alt="Sony camera" aspect="3/2" sizes="25vw" speed={0.02} />
+                <ParallaxImage src="/images/approach01.jpg" alt="Studio interior with podcast setup" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
                   {t("img01Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>}
@@ -1191,7 +1191,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.09} className="lg:mt-60">
               <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
-                <ParallaxImage src="/images/mixer.jpg" alt="Audio mixer" aspect="3/2" sizes="25vw" speed={0.03} />
+                <ParallaxImage src="/images/approach02.jpg" alt="Operator with gimbal camera" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
                   {t("img02Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>}
@@ -1200,7 +1200,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.06} className="lg:mt-24">
               <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
-                <ParallaxImage src="/images/mic.jpg" alt="Studio microphone" aspect="3/2" sizes="25vw" speed={0.02} />
+                <ParallaxImage src="/images/approach03.jpg" alt="Behind the scenes of a shoot" aspect="3/2" sizes="25vw" speed={0.02} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
                   {t("img03Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>}
@@ -1209,7 +1209,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.075} className="lg:mt-48">
               <div style={{ paddingLeft: "12px" }}>
-                <ParallaxImage src="/images/books.jpg" alt="Studio details" aspect="3/2" sizes="25vw" speed={0.03} />
+                <ParallaxImage src="/images/approach04.jpg" alt="Studio lighting and camera setup" aspect="3/2" sizes="25vw" speed={0.03} />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
                   {t("img04Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img04Desc")}</p>}
