@@ -25,8 +25,8 @@ export async function POST(request: Request) {
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
 
-    await resend.emails.send({
-      from: "Alwaysfriday.live <onboarding@resend.dev>",
+    const { data, error } = await resend.emails.send({
+      from: "Alwaysfriday <hello@alwaysfriday.studio>",
       to: "hello@alwaysfriday.studio",
       replyTo: contact.includes("@") ? contact : undefined,
       subject: `New enquiry from ${name}`,
@@ -39,7 +39,15 @@ export async function POST(request: Request) {
       ].join("\n"),
     });
 
-    return NextResponse.json({ success: true });
+    if (error) {
+      console.error("Resend API error:", error);
+      return NextResponse.json(
+        { error: "Failed to send message. Please try again." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, id: data?.id });
   } catch (error) {
     console.error("Contact form error:", error);
     return NextResponse.json(
