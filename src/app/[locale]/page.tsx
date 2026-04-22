@@ -319,6 +319,7 @@ function ParallaxImage({
   sizes,
   speed = 0.08,
   className = "",
+  color = false,
 }: {
   src: string;
   alt: string;
@@ -326,6 +327,7 @@ function ParallaxImage({
   sizes: string;
   speed?: number;
   className?: string;
+  color?: boolean;
 }) {
   const { ref, y } = useParallax(speed);
   return (
@@ -338,7 +340,7 @@ function ParallaxImage({
           src={src}
           alt={alt}
           fill
-          className="object-cover grayscale"
+          className={`object-cover ${color ? "" : "grayscale"}`}
           sizes={sizes}
         />
       </div>
@@ -496,9 +498,11 @@ function Accordion({
 function ImageCarousel({
   images,
   className = "",
+  color = false,
 }: {
   images: { src: string; alt: string; num: string; desc: string }[];
   className?: string;
+  color?: boolean;
 }) {
   return (
     <div className={`overflow-x-auto scrollbar-hide ${className}`}>
@@ -510,7 +514,7 @@ function ImageCarousel({
                 src={img.src}
                 alt={img.alt}
                 fill
-                className="object-cover grayscale"
+                className={`object-cover ${color ? "" : "grayscale"}`}
                 sizes="65vw"
               />
             </div>
@@ -1182,7 +1186,7 @@ function Approach() {
           >
             <ParallaxBlock speed={0.035} className="lg:mt-0">
               <div style={{ paddingRight: "12px" }}>
-                <ParallaxImage src="/images/approach01.jpg" alt="Studio interior with podcast setup" aspect="3/2" sizes="25vw" speed={0.02} />
+                <ParallaxImage src="/images/approach01.jpg" alt="Studio interior with podcast setup" aspect="3/2" sizes="25vw" speed={0.02} color />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">01</p>
                   {t("img01Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img01Desc")}</p>}
@@ -1191,7 +1195,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.09} className="lg:mt-60">
               <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
-                <ParallaxImage src="/images/approach02.jpg" alt="Operator with gimbal camera" aspect="3/2" sizes="25vw" speed={0.03} />
+                <ParallaxImage src="/images/approach02.jpg" alt="Operator with gimbal camera" aspect="3/2" sizes="25vw" speed={0.03} color />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">02</p>
                   {t("img02Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img02Desc")}</p>}
@@ -1200,7 +1204,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.06} className="lg:mt-24">
               <div style={{ paddingLeft: "12px", paddingRight: "12px" }}>
-                <ParallaxImage src="/images/approach03.jpg" alt="Behind the scenes of a shoot" aspect="3/2" sizes="25vw" speed={0.02} />
+                <ParallaxImage src="/images/approach03.jpg" alt="Behind the scenes of a shoot" aspect="3/2" sizes="25vw" speed={0.02} color />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">03</p>
                   {t("img03Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img03Desc")}</p>}
@@ -1209,7 +1213,7 @@ function Approach() {
             </ParallaxBlock>
             <ParallaxBlock speed={0.075} className="lg:mt-48">
               <div style={{ paddingLeft: "12px" }}>
-                <ParallaxImage src="/images/approach04.jpg" alt="Studio lighting and camera setup" aspect="3/2" sizes="25vw" speed={0.03} />
+                <ParallaxImage src="/images/approach04.jpg" alt="Studio lighting and camera setup" aspect="3/2" sizes="25vw" speed={0.03} color />
                 <div className="flex items-baseline justify-between mt-3 px-1">
                   <p className="text-[10px] tracking-[0.2em] text-white/40 uppercase">04</p>
                   {t("img04Desc") && <p className="text-[10px] tracking-[0.15em] text-white/40 uppercase">{t("img04Desc")}</p>}
@@ -1220,7 +1224,7 @@ function Approach() {
         </div>
         {/* Mobile: swipeable carousel */}
         <div className="md:hidden px-3">
-          <ImageCarousel images={images} />
+          <ImageCarousel images={images} color />
         </div>
       </div>
     </section>
