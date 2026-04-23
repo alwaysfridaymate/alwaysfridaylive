@@ -411,14 +411,14 @@ function SectionSvg({
 }) {
   return (
     <ParallaxSvg speed={speed}>
-      <div className={`w-full overflow-hidden ${blend ? "mix-blend-difference" : ""}`}>
+      <div className={`w-full overflow-hidden flex justify-center ${blend ? "mix-blend-difference" : ""}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
           alt=""
           aria-hidden="true"
-          className="w-full h-auto hidden md:block"
-          style={{ filter: "brightness(0) invert(1)" }}
+          className="w-auto max-w-none hidden md:block"
+          style={{ filter: "brightness(0) invert(1)", height: "min(calc((100vw - 64px) * 0.196), 40vh)" }}
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -685,7 +685,8 @@ function Hero() {
             src="/images/live.svg"
             alt=""
             aria-hidden="true"
-            className="w-full h-auto max-h-[45vh] object-contain select-none hidden md:block"
+            className="w-auto max-w-full object-contain select-none hidden md:block"
+            style={{ height: "min(calc((100vw - 64px) * 0.196), 40vh)" }}
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -1105,9 +1106,9 @@ function Approach() {
         {/* HOW SVG */}
         <div className="relative mb-16 md:mb-20">
           <ParallaxSvg speed={-0.05}>
-            <div className="w-full overflow-hidden">
+            <div className="w-full overflow-hidden flex justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/how.svg" alt="" aria-hidden="true" className="w-full h-auto hidden md:block" style={{ filter: "brightness(0) invert(1)" }} />
+              <img src="/images/how.svg" alt="" aria-hidden="true" className="w-auto max-w-none hidden md:block" style={{ filter: "brightness(0) invert(1)", height: "min(calc((100vw - 64px) * 0.196), 40vh)" }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/how.svg" alt="" aria-hidden="true" className="md:hidden h-[86px] w-auto" style={{ filter: "brightness(0) invert(1)" }} />
             </div>
