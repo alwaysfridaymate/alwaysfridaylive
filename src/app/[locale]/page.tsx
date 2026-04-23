@@ -418,7 +418,7 @@ function SectionSvg({
           alt=""
           aria-hidden="true"
           className="w-auto max-w-none hidden md:block"
-          style={{ filter: "brightness(0) invert(1)", height: "min(22.11vw, 45vh)" }}
+          style={{ filter: "brightness(0) invert(1)", height: "min(calc((100vw - 64px) * 0.2211), 45vh)" }}
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -1107,7 +1107,7 @@ function Approach() {
           <ParallaxSvg speed={-0.05}>
             <div className="w-full overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/how.svg" alt="" aria-hidden="true" className="w-auto max-w-none hidden md:block" style={{ filter: "brightness(0) invert(1)", height: "min(22.11vw, 45vh)" }} />
+              <img src="/images/how.svg" alt="" aria-hidden="true" className="w-auto max-w-none hidden md:block" style={{ filter: "brightness(0) invert(1)", height: "min(calc((100vw - 64px) * 0.2211), 45vh)" }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/how.svg" alt="" aria-hidden="true" className="md:hidden h-[86px] w-auto" style={{ filter: "brightness(0) invert(1)" }} />
             </div>
